@@ -17,5 +17,3 @@ public:
 	static int IdCounter;
 
 };
-
-int Equation::IdCounter = 1;

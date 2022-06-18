@@ -9,5 +9,6 @@ class Viewer {
 
 public:
 	string getLine(string hash);
+	string apiTest(string hash, string content);
 
 };
