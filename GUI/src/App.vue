@@ -8,27 +8,30 @@
     </div>
   </div>
 </template>
+
 <script>
-import { storeToRefs } from 'pinia';
-import { useGlobalStore } from "@/store/global";
-import Menu from '@/components/Menu';
-import Draw from "@/components/Draw";
+import { storeToRefs } from 'pinia'
+import { useGlobalStore } from '@/store/global'
+import Menu from '@/components/Menu'
+import Draw from '@/components/Draw'
+
 export default {
   setup() {
-    const { process } = storeToRefs(useGlobalStore());
+    const { process } = storeToRefs(useGlobalStore())
     return {
-      process
+      process,
     }
   },
   components: {
     Menu,
-    Draw
+    Draw,
   },
   mounted() {
-    console.log(this.process);
-  }
+    console.log(this.process)
+  },
 }
 </script>
+
 <style lang="scss">
 #app {
   font-family: Avenir, Helvetica, Arial, sans-serif;

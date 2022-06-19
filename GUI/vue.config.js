@@ -3,5 +3,5 @@ module.exports = defineConfig({
   transpileDependencies: true,
   chainWebpack: (config) => {
     config.target('electron-renderer')
-  }
+  },
 })
