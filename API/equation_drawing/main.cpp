@@ -10,7 +10,15 @@ int main() {
 	while (cin >> opt) {
 		cin >> hash;
 		if (opt == "getLine") {
-			cout << "";
+			int id, dpi;
+			double xMin, xMax, yMin, yMax;
+			cin >> id >> dpi >> xMin >> xMax >> yMin >> yMax;
+			cout << cal.getLine(hash, id, dpi, xMin, xMax, yMin, yMax);
+		}
+		else if (opt == "addEquation") {
+			string equation;
+			cin >> equation;
+			cout << cal.addEquation(hash, equation);
 		}
 		else if (opt == "apiTest") {
 			string content;

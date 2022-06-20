@@ -1,21 +1,31 @@
 #pragma once
 #include <map>
 #include <vector>
+#include <string>
+#include <sstream>
+#include <algorithm>
 #include "Viewer.h"
 #include "Equation.h"`
+#include "atmsp.h"
 
 using namespace std;
 
 class Caculater {
 
 public:
-	vector<Equation> Equations;
+	vector<Equation> equations;
 	Viewer viewer;
+	map<char, double> vars;
+	int idCounter = 1;
 
-	string getLine(string hash, int id, string equation);
+	string addEquation(string hash, string equation);
+	string editEquation(string hash);
+	string getLine(string hash, int id, int dpi, double xMin, double xMax, double yMin, double yMax);
 	string getAllLine(string hash);
-	string apiTest(string hash, string content);
 	void delEquation(string hash, int id);
-	void setVarible(string hash, string name, string equation);
+	string setVar(string hash, string name, string equation);
+	void delVar(string hash);
+	string apiTest(string hash, string content);
 
+	Equation getEquationById(int id);
 };
