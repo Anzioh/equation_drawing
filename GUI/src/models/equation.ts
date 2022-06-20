@@ -1,4 +1,4 @@
-export interface Function {
+export interface Equation {
   id: number
   color: string
   equation: string

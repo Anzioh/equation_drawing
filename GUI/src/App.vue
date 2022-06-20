@@ -3,6 +3,8 @@
     <div class="row">
       <div class="col-3">
         <Menu></Menu>
+      </div>
+      <div class="col-9">
         <Draw></Draw>
       </div>
     </div>
@@ -12,14 +14,19 @@
 <script>
 import { storeToRefs } from 'pinia'
 import { useGlobalStore } from '@/store/global'
+import { usePlotlyStore } from "@/store/plotly";
 import Menu from '@/components/Menu'
 import Draw from '@/components/Draw'
 
 export default {
   setup() {
+    const globalStore = useGlobalStore();
+    const plotlyStore = usePlotlyStore();
     const { process } = storeToRefs(useGlobalStore())
     return {
       process,
+      globalStore,
+      plotlyStore
     }
   },
   components: {
@@ -27,17 +34,14 @@ export default {
     Draw,
   },
   mounted() {
-    console.log(this.process)
+    console.log(this.process);
   },
 }
 </script>
 
 <style lang="scss">
 #app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
+  height: 100vh;
+  overflow: hidden;
 }
 </style>
