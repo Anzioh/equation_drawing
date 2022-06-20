@@ -12,6 +12,11 @@ int main() {
 		if (opt == "getLine") {
 			cout << "";
 		}
+		else if (opt == "addEquation") {
+			string equation;
+			cin >> equation;
+			cout << cal.addEquation(hash, equation);
+		}
 		else if (opt == "apiTest") {
 			string content;
 			cin >> content;
