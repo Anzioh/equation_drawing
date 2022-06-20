@@ -8,7 +8,10 @@ using json = nlohmann::json;
 class Viewer {
 
 public:
-	string getLine(string hash);
+	string addEquation(string hash, bool isError, string errorMessage, int id, string equation);
+	string editEquation();
+	string getLine(string hash, vector<double> x, vector<double> y);
+	string getAllLine(string hash);
 	string apiTest(string hash, string content);
 
 };
