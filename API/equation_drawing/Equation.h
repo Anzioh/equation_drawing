@@ -10,7 +10,10 @@ class Equation {
 public:
 	int id;
 	string equ;
+	vector<char> vars;
+	string lhs;
+	string rhs;
 
-	Equation(int id, string equ);
+	Equation(int id, string equ, vector<char> vars, string lhs, string rhs);
 
 };

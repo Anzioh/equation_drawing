@@ -76,8 +76,59 @@ string Caculater::addEquation(string hash, string equation) {
 		return viewer.addEquation(hash, isError, errorMessage, -1, "");
 	}
 	else {
-		Equation newEqu(this->idCounter++, equation);
+		Equation newEqu(this->idCounter++, equation, varsInEqu, lhs, rhs);
 		this->equations.push_back(newEqu);
 		return viewer.addEquation(hash, isError, errorMessage, newEqu.id, newEqu.equ);
+	}
+}
+
+string Caculater::getLine(string hash, int id, int dpi, double xMin, double xMax, double yMin, double yMax) {
+	vector<double> x;
+	vector<double> y;
+	ATMSP<double> parser;
+	ATMSB<double> byteCode;
+	Equation equ = this->getEquationById(id);
+	int xyIndex = 0;
+
+	for (int i = 0; i < equ.vars.size(); i++) {
+		if (equ.vars[i] == 'x' || equ.vars[i] == 'y') {
+			xyIndex = i;
+			continue;
+		}
+		else {
+			byteCode.var[i] = this->vars.find(equ.vars[i])->second;
+		}
+	}
+	stringstream ss;
+	copy(equ.vars.begin(), equ.vars.end(), ostream_iterator<char>(ss, ","));
+	string varStr = ss.str();
+	double xT = (xMax - xMin) / (dpi - 1);
+	double yT = (yMax - yMin) / (dpi - 1);
+	if (equ.lhs == "y") {
+		double xV = xMin;
+		for (int i = 0; i < dpi; i++, xV += xT) {
+			byteCode.var[xyIndex] = xV;
+			parser.parse(byteCode, equ.rhs, varStr);
+			x.push_back(xV);
+			y.push_back(byteCode.run());
+		}
+	}
+	else if (equ.lhs == "x") {
+		double yV = yMin;
+		for (int i = 0; i < dpi; i++, yV += yT) {
+			byteCode.var[xyIndex] = yV;
+			parser.parse(byteCode, equ.rhs, varStr);
+			x.push_back(byteCode.run());
+			y.push_back(yV);
+		}
+	}
+	return viewer.getLine(hash, x, y);
+}
+
+Equation Caculater::getEquationById(int id) {
+	for (auto& equ : this->equations) {
+		if (equ.id == id) {
+			return equ;
+		}
 	}
 }

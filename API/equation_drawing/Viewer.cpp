@@ -11,6 +11,20 @@ string Viewer::addEquation(string hash, bool isError, string errorMessage, int i
 	return response.dump();
 }
 
+string Viewer::getLine(string hash, vector<double> x, vector<double> y) {
+	json response = {
+		{"x", x},
+		{"y", y},
+		{"hash", hash}
+	};
+	//response["x"] = json::array();
+	//response["y"] = json::array();
+	//for (auto& xV : x) {
+	//	response["x"].push_back(x);
+	//}
+	return response.dump();
+}
+
 string Viewer::apiTest(string hash, string content) {
 	json response = {
 		{"content", content},
