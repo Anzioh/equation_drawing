@@ -6,6 +6,7 @@
 #include <algorithm>
 #include "Viewer.h"
 #include "Equation.h"`
+#include "Varible.h"
 #include "atmsp.h"
 
 using namespace std;
@@ -15,7 +16,7 @@ class Caculater {
 public:
 	vector<Equation> equations;
 	Viewer viewer;
-	map<char, double> vars;
+	vector<Varible> vars;
 	int idCounter = 1;
 
 	string addEquation(string hash, string equation);
@@ -23,9 +24,13 @@ public:
 	string getLine(string hash, int id, int dpi, double xMin, double xMax, double yMin, double yMax);
 	string getAllLine(string hash);
 	void delEquation(string hash, int id);
-	string setVar(string hash, string name, string equation);
+	string addVar(string hash, string equation);
+	string editVar(string hash, string);
 	void delVar(string hash);
 	string apiTest(string hash, string content);
 
 	Equation& getEquationById(int id);
+	Varible& getVaribleById(int id);
+	Varible& getVaribleByKey(string key);
+	Varible& getVaribleByKey(char key);
 };
