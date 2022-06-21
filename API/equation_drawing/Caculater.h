@@ -6,7 +6,7 @@
 #include <algorithm>
 #include "Viewer.h"
 #include "Equation.h"`
-#include "Varible.h"
+#include "Variable.h"
 #include "atmsp.h"
 
 using namespace std;
@@ -16,7 +16,7 @@ class Caculater {
 public:
 	vector<Equation> equations;
 	Viewer viewer;
-	vector<Varible> vars;
+	vector<Variable> vars;
 	int idCounter = 1;
 
 	string addEquation(string hash, string equation);
@@ -30,8 +30,8 @@ public:
 	string apiTest(string hash, string content);
 
 	Equation& getEquationById(int id);
-	Varible& getVaribleById(int id);
-	Varible& getVaribleByKey(string key);
-	Varible& getVaribleByKey(char key);
+	Variable& getVaribleById(int id);
+	Variable& getVaribleByKey(string key);
+	Variable& getVaribleByKey(char key);
 	void refreshAllVarsValue();
 };

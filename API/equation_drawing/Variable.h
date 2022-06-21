@@ -4,7 +4,7 @@
 
 using namespace std;
 
-class Varible {
+class Variable {
 
 public:
 	int id;
@@ -14,7 +14,7 @@ public:
 	string lhs;
 	string rhs;
 
-	Varible(int id);
-	Varible(int id, double value, string equ, vector<char> vars, string lhs, string rhs);
+	Variable(int id);
+	Variable(int id, double value, string equ, vector<char> vars, string lhs, string rhs);
 
 };
