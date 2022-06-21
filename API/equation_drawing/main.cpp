@@ -20,6 +20,12 @@ int main() {
 			cin >> equation;
 			cout << cal.addEquation(hash, equation);
 		}
+		else if (opt == "editEquation") {
+			int id;
+			string equation;
+			cin >> id >> equation;
+			cout << cal.editEquation(hash, id, equation);
+		}
 		else if (opt == "apiTest") {
 			string content;
 			cin >> content;

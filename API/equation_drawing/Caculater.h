@@ -19,7 +19,7 @@ public:
 	int idCounter = 1;
 
 	string addEquation(string hash, string equation);
-	string editEquation(string hash);
+	string editEquation(string hash, int id, string equation);
 	string getLine(string hash, int id, int dpi, double xMin, double xMax, double yMin, double yMax);
 	string getAllLine(string hash);
 	void delEquation(string hash, int id);
@@ -27,5 +27,5 @@ public:
 	void delVar(string hash);
 	string apiTest(string hash, string content);
 
-	Equation getEquationById(int id);
+	Equation& getEquationById(int id);
 };

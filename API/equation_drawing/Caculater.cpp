@@ -82,6 +82,42 @@ string Caculater::addEquation(string hash, string equation) {
 	}
 }
 
+string Caculater::editEquation(string hash, int id, string equation) {
+	Equation& equ = this->getEquationById(id);
+	bool isError = false;
+	string errorMessage = "";
+	int eqlIndex = equation.find('=');
+	if (eqlIndex != 1) {
+		isError = true;
+		errorMessage = "Varible error";
+	}
+	string lhs = equation.substr(0, 1);
+	string rhs = equation.substr(eqlIndex + 1);
+	vector<char> varsInEqu = getVarInFormula(rhs);
+	ATMSP<double> parser;
+	ATMSB<double> byteCode;
+	for (int i = 0; i < varsInEqu.size(); i++) {
+		byteCode.var[i] = 1;
+	}
+	stringstream ss;
+	copy(varsInEqu.begin(), varsInEqu.end(), ostream_iterator<char>(ss, ","));
+	if (parser.parse(byteCode, rhs, ss.str())) {
+		isError = true;
+		errorMessage = "Equation format error";
+	}
+	if (isError) {
+		return viewer.editEquation(hash, isError, errorMessage, equ.id, equ.equ, equation);
+	}
+	else {
+		string srcEqu = equ.equ;
+		equ.equ = equation;
+		equ.lhs = lhs;
+		equ.rhs = rhs;
+		equ.vars = varsInEqu;
+		return viewer.editEquation(hash, isError, errorMessage, equ.id, srcEqu, equ.equ);
+	}
+}
+
 string Caculater::getLine(string hash, int id, int dpi, double xMin, double xMax, double yMin, double yMax) {
 	vector<double> x;
 	vector<double> y;
@@ -125,7 +161,7 @@ string Caculater::getLine(string hash, int id, int dpi, double xMin, double xMax
 	return viewer.getLine(hash, x, y);
 }
 
-Equation Caculater::getEquationById(int id) {
+Equation& Caculater::getEquationById(int id) {
 	for (auto& equ : this->equations) {
 		if (equ.id == id) {
 			return equ;
