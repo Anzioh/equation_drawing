@@ -25,7 +25,7 @@ public:
 	string getAllLine(string hash);
 	void delEquation(string hash, int id);
 	string addVar(string hash, string equation);
-	string editVar(string hash, string);
+	string editVar(string hash, int id, string equation);
 	void delVar(string hash);
 	string apiTest(string hash, string content);
 
@@ -33,4 +33,5 @@ public:
 	Varible& getVaribleById(int id);
 	Varible& getVaribleByKey(string key);
 	Varible& getVaribleByKey(char key);
+	void refreshAllVarsValue();
 };

@@ -208,6 +208,59 @@ string Caculater::addVar(string hash, string equation) {
 	return viewer.addVar(hash, isError, errorMessage, newVar.id, newVar.equ);
 }
 
+string Caculater::editVar(string hash, int id, string equation) {
+	Varible& var = this->getVaribleById(id);
+	bool isError = false;
+	string errorMessage = "";
+	int eqlIndex = equation.find('=');
+	if (eqlIndex != 1) {
+		isError = true;
+		errorMessage = "Varible error";
+	}
+	string lhs = equation.substr(0, 1);
+	if (lhs != var.lhs && this->getVaribleByKey(lhs).id != -1) {
+		isError = true;
+		errorMessage = "Varible already exists";
+		return this->viewer.editVar(hash, isError, errorMessage, -1, var.equ, equation);
+	}
+	string rhs = equation.substr(eqlIndex + 1);
+	vector<char> varsInEqu = getVarInFormula(rhs);
+	for (auto& v : varsInEqu) {
+		if (v == lhs.c_str()[0]) {
+			isError = true;
+			errorMessage = "Loop definition varible";
+			return this->viewer.editVar(hash, isError, errorMessage, -1, var.equ, equation);
+		}
+		for (auto& vE : this->getVaribleByKey(v).vars) {
+			if (vE == lhs.c_str()[0]) {
+				isError = true;
+				errorMessage = "Loop definition varible";
+				return this->viewer.editVar(hash, isError, errorMessage, -1, var.equ, equation);
+			}
+		}
+	}
+	ATMSP<double> parser;
+	ATMSB<double> byteCode;
+	for (int i = 0; i < varsInEqu.size(); i++) {
+		byteCode.var[i] = this->getVaribleByKey(varsInEqu[i]).value;
+	}
+	stringstream ss;
+	copy(varsInEqu.begin(), varsInEqu.end(), ostream_iterator<char>(ss, ","));
+	if (parser.parse(byteCode, rhs, ss.str())) {
+		isError = true;
+		errorMessage = "Equation format error";
+		return viewer.editVar(hash, isError, errorMessage, -1, var.equ, equation);
+	}
+	string srcEqu = var.equ;
+	var.equ = equation;
+	var.lhs = lhs;
+	var.rhs = rhs;
+	var.vars = varsInEqu;
+	var.value = byteCode.run();
+	this->refreshAllVarsValue();
+	return viewer.editVar(hash, isError, errorMessage, var.id, srcEqu, var.equ);
+}
+
 Equation& Caculater::getEquationById(int id) {
 	for (auto& equ : this->equations) {
 		if (equ.id == id) {
@@ -242,5 +295,19 @@ Varible& Caculater::getVaribleByKey(char key) {
 	}
 	Varible var(-1);
 	return var;
+}
+
+void Caculater::refreshAllVarsValue() {
+	for (auto& v : this->vars) {
+		ATMSP<double> parser;
+		ATMSB<double> byteCode;
+		for (int i = 0; i < v.vars.size(); i++) {
+			byteCode.var[i] = this->getVaribleByKey(v.vars[i]).value;
+		}
+		stringstream ss;
+		copy(v.vars.begin(), v.vars.end(), ostream_iterator<char>(ss, ","));
+		parser.parse(byteCode, v.rhs, ss.str());
+		v.value = byteCode.run();
+	}
 }
 

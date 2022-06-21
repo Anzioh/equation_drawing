@@ -43,6 +43,18 @@ string Viewer::addVar(string hash, bool isError, string errorMessage, int id, st
 	return response.dump();
 }
 
+string Viewer::editVar(string hash, bool isError, string errorMessage, int id, string srcEquation, string equation) {
+	json response = {
+	{"id", id},
+	{"srcEquation", srcEquation},
+	{"equation", equation},
+	{"isError", isError},
+	{"errorMessage", errorMessage},
+	{"hash", hash}
+	};
+	return response.dump();
+}
+
 string Viewer::apiTest(string hash, string content) {
 	json response = {
 		{"content", content},

@@ -31,6 +31,12 @@ int main() {
 			cin >> equation;
 			cout << cal.addVar(hash, equation);
 		}
+		else if (opt == "editVar") {
+			int id;
+			string equation;
+			cin >> id >> equation;
+			cout << cal.editVar(hash, id, equation);
+		}
 		else if (opt == "apiTest") {
 			string content;
 			cin >> content;
