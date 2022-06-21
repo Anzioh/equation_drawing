@@ -223,6 +223,10 @@ string Caculater::getAllLine(string hash, int dpi, double xMin, double xMax, dou
 	return this->viewer.getAllLine(hash, id, x, y);
 }
 
+void Caculater::delEquation(string hash, int id) {
+	this->equations.erase(remove_if(this->equations.begin(), this->equations.end(), [id](Equation const& equ) { return equ.id == id; }), this->equations.end());
+}
+
 string Caculater::addVar(string hash, string equation) {
 	bool isError = false;
 	string errorMessage = "";
@@ -331,6 +335,17 @@ string Caculater::editVar(string hash, int id, string equation) {
 	var.value = byteCode.run();
 	this->refreshAllVarsValue();
 	return viewer.editVar(hash, isError, errorMessage, var.id, srcEqu, var.equ);
+}
+
+string Caculater::delVar(string hash, int id) {
+	Variable var = this->getVaribleById(id);
+	for (auto& equ : this->equations) {
+		if (find(equ.vars.begin(), equ.vars.end(), var.lhs.c_str()[0]) != equ.vars.end()) {
+			return this->viewer.delVar(hash, true, "Variable is being used");
+		}
+	}
+	this->vars.erase(remove_if(this->vars.begin(), this->vars.end(), [id](Variable const& v) { return v.id == id; }), this->vars.end());
+	return this->viewer.delVar(hash, false, "");
 }
 
 Equation& Caculater::getEquationById(int id) {

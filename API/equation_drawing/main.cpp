@@ -32,6 +32,11 @@ int main() {
 			cin >> id >> equation;
 			cout << cal.editEquation(hash, id, equation);
 		}
+		else if (opt == "delEquation") {
+			int id;
+			cin >> id;
+			cal.delEquation(hash, id);
+		}
 		else if (opt == "addVar") {
 			string equation;
 			cin >> equation;
@@ -42,6 +47,11 @@ int main() {
 			string equation;
 			cin >> id >> equation;
 			cout << cal.editVar(hash, id, equation);
+		}
+		else if (opt == "delVar") {
+			int id;
+			cin >> id;
+			cout << cal.delVar(hash, id);
 		}
 		else if (opt == "apiTest") {
 			string content;

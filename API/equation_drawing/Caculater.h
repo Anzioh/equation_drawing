@@ -26,7 +26,7 @@ public:
 	void delEquation(string hash, int id);
 	string addVar(string hash, string equation);
 	string editVar(string hash, int id, string equation);
-	void delVar(string hash);
+	string delVar(string hash, int id);
 	string apiTest(string hash, string content);
 
 	Equation& getEquationById(int id);
