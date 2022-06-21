@@ -43,6 +43,7 @@ export const usePlotlyStore = defineStore("plotly", {
             }),
             equations: ref<Equation[]>([]),
             variables: ref<Variable[]>([]),
+            variableModalDisplay: ref(false)
             // isError: ref(null), // edit or add error status(include: equation, variable)
             // isFilling: ref(false), // is prompt open(include: equation, variable)
         }

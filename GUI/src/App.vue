@@ -5,7 +5,7 @@
         <Menu></Menu>
       </div>
       <div class="col-9">
-        <Draw></Draw>
+        <Plotly></Plotly>
       </div>
     </div>
   </div>
@@ -13,16 +13,15 @@
 
 <script>
 import { storeToRefs } from 'pinia'
-import { ref, toRaw, reactive } from 'vue'
 import { useGlobalStore } from '@/store/global'
 import { usePlotlyStore } from "@/store/plotly"
 import { exec } from "child_process"
 import Menu from '@/components/Menu'
-import Draw from '@/components/Draw'
+import Plotly from '@/components/Plotly'
 
 export default {
   setup() {
-    const globalStore = reactive(useGlobalStore());
+    const globalStore = useGlobalStore();
     const plotlyStore = usePlotlyStore();
     const { process, responseStacks, responseStringCache } = storeToRefs(useGlobalStore())
     return {
@@ -35,7 +34,7 @@ export default {
   },
   components: {
     Menu,
-    Draw,
+    Plotly,
   },
   beforeMount() {
     this.globalStore.process = exec(`./src/assets/binary/${this.globalStore.isMac ? 'macOS' : 'Windows'}/equation_drawing${this.globalStore.isMac ? '' : '.exe'}`);
@@ -67,7 +66,6 @@ export default {
           this.responseStacks[thisResponseIndex].completed = true;
           this.responseStacks[thisResponseIndex].callback(data);
           this.responseStacks[thisResponseIndex].result = data;
-          console.log(data);
         }
       }catch (e) {
         this.responseStringCache += response; // push some json string to cache

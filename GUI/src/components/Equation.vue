@@ -1,11 +1,17 @@
 <template>
   <div class="pretty-card">
-    <el-color-picker v-model="color" show-alpha />
+    <el-color-picker v-model="data.color" show-alpha />
     <div class="content">
-      <p>{{ srcEquation }}</p>
+      <p>{{ data.srcEquation }}</p>
     </div>
     <div class="control">
       <el-button icon="EditPen" plain size="small" @click="editEquation" circle />
+      <el-popconfirm title="Are you sure to delete this?" @confirm="$emit('delEquation', data.id)">
+        <template #reference>
+          <el-button icon="Close" plain size="small" circle />
+        </template>
+      </el-popconfirm>
+
     </div>
   </div>
 </template>
@@ -13,15 +19,11 @@
   import { storeToRefs } from 'pinia';
   import { useGlobalStore } from "@/store/global";
   import { usePlotlyStore } from "@/store/plotly";
-  import {ElMessage, ElMessageBox} from "element-plus";
+  import { ElMessage, ElMessageBox } from "element-plus";
 
   export default {
     props: {
-      id: Number,
-      equation: String,
-      srcEquation: String,
-      color: String,
-      tokenList: Array
+      data: Object
     },
     setup() {
       const globalStore = useGlobalStore();
@@ -40,7 +42,7 @@
         ElMessageBox.prompt('enter your equation: ', 'Modify Equation', {
           confirmButtonText: 'Modify',
           cancelButtonText: 'Cancel',
-          inputValue: this.equation,
+          inputValue: this.data.srcEquation,
           beforeClose: async (action, instance, done) => {
             if (action === 'confirm') {
               if (! instance.inputValue) {
@@ -53,7 +55,8 @@
               instance.confirmButtonLoading = true;
               instance.confirmButtonText = 'Loading...';
               // call c++ API
-              const token = await this.api_editEquation(instance.inputValue);
+              const newEquation = instance.inputValue;
+              const token = await this.api_editEquation(newEquation);
               let interval = setInterval(() => {
                 const response = this.globalStore.getResLogByToken(token);
                 if (response) {
@@ -72,9 +75,9 @@
                       })
                     }
                     else {
-                      this.tokenList.push(data.hash);
-                      this.srcEquation = instance.inputValue;
-                      this.equation = data.equation;
+                      this.data.tokenList.push(data.hash);
+                      this.data.srcEquation = newEquation;
+                      this.data.equation = data.equation;
                       done();
                     }
                   }
@@ -102,7 +105,7 @@
       async api_editEquation(equation) {
         await this.globalStore.waitAllReqCompleted();
         const token = this.globalStore.getToken();
-        const commend = `editEquation ${token} ${this.id} ${equation.replace(/\s/g, '')}`;
+        const commend = `editEquation ${token} ${this.data.id} ${equation.replace(/\s/g, '')}`;
         this.responseStacks.push({
           method: "editEquation",
           commend: commend,
@@ -112,7 +115,6 @@
           callback: () => {}
         });
         this.globalStore.apiSent(commend);
-        console.log(commend);
         return token;
       }
     },

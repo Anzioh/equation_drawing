@@ -8,20 +8,17 @@
         <p class="m-0 text-secondary">方程組</p>
         <el-button size="small" type="primary" icon="Plus" @click="addEquation" circle plain></el-button>
       </div>
-      <Equation
-          v-for="item in equations"
-          :id="item.id"
-          :srcEquation="item.srcEquation"
-          :equation="item.equation"
-          :color="item.color"
-          :tokenList="item.tokenList"></Equation>
+      <Equation v-for="item in equations" :data="item" @delEquation="api_delEquation"></Equation>
     </div>
     <div class="vh-45">
       <div class="fbc">
         <p class="m-0 text-secondary">變量</p>
-        <el-button size="small" type="primary" icon="Plus" circle plain></el-button>
+        <el-button size="small" type="primary" icon="Plus" @click="variableModalDisplay = true" circle plain></el-button>
       </div>
       <Variable></Variable>
+      <el-dialog v-model="variableModalDisplay" title="Add a variable" width="40%">
+<!--    TODO: variableModal content    -->
+      </el-dialog>
     </div>
   </div>
 </template>
@@ -32,19 +29,20 @@
   import { usePlotlyStore } from "@/store/plotly";
   import Equation from "@/components/Equation";
   import Variable from "@/components/Variable";
-  import { ElMessage, ElMessageBox } from 'element-plus';
+  import { ElMessage, ElMessageBox, ElNotification } from 'element-plus';
   export default {
     setup() {
       const globalStore = useGlobalStore();
       const plotlyStore = usePlotlyStore();
       const { process, responseStacks } = storeToRefs(useGlobalStore());
-      const { equations } = storeToRefs(usePlotlyStore());
+      const { equations, variableModalDisplay } = storeToRefs(usePlotlyStore());
       return {
         globalStore,
         plotlyStore,
         process,
         responseStacks,
-        equations
+        equations,
+        variableModalDisplay
       }
     },
     components: {
@@ -135,6 +133,54 @@
         });
         this.globalStore.apiSent(commend);
         return token;
+      },
+      async api_delEquation(id) {
+        await this.globalStore.waitAllReqCompleted();
+        const token = this.globalStore.getToken();
+        const commend = `delEquation ${token} ${id}`;
+        this.responseStacks.push({
+          method: "delEquation",
+          commend: commend,
+          token: token,
+          completed: false,
+          result: null,
+          callback: () => {}
+        });
+        this.globalStore.apiSent(commend);
+        return token;
+      },
+      async addVariable() {
+
+      },
+      async api_addVariable(equation) {
+        await this.globalStore.waitAllReqCompleted();
+        const token = this.globalStore.getToken();
+        const commend = `addVar ${token} ${equation}`;
+        this.responseStacks.push({
+          method: "addEquation",
+          commend: commend,
+          token: token,
+          completed: false,
+          result: null,
+          callback: () => {}
+        });
+        this.globalStore.apiSent(commend);
+        return token;
+      },
+      async api_delVariable(id) {
+        await this.globalStore.waitAllReqCompleted();
+        const token = this.globalStore.getToken();
+        const commend = `delVar ${token} ${id}`;
+        this.responseStacks.push({
+          method: "delEquation",
+          commend: commend,
+          token: token,
+          completed: false,
+          result: null,
+          callback: () => {}
+        });
+        this.globalStore.apiSent(commend);
+        return token;
       }
     }
   }
@@ -154,6 +200,5 @@
   height: 100vh;
   width: 15px;
   background-color: rgb(251, 251, 251);
-
 }
 </style>
