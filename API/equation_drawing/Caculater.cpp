@@ -56,7 +56,7 @@ string Caculater::addEquation(string hash, string equation) {
 	int eqlIndex = equation.find('=');
 	if (eqlIndex != 1) {
 		isError = true;
-		errorMessage = "Varible error";
+		errorMessage = "Variable error";
 	}
 	string lhs = equation.substr(0, 1);
 	string rhs = equation.substr(eqlIndex + 1);
@@ -64,7 +64,7 @@ string Caculater::addEquation(string hash, string equation) {
 	for (auto& v : varsInEqu) {
 		if (!(v == 'x' || v == 'y') && this->getVaribleByKey(v).id == -1) {
 			isError = true;
-			errorMessage = "Varible does not exist";
+			errorMessage = "Variable does not exist";
 			return this->viewer.addEquation(hash, isError, errorMessage, -1, equation);
 		}
 	}
@@ -97,7 +97,7 @@ string Caculater::editEquation(string hash, int id, string equation) {
 	int eqlIndex = equation.find('=');
 	if (eqlIndex != 1) {
 		isError = true;
-		errorMessage = "Varible error";
+		errorMessage = "Variable error";
 	}
 	string lhs = equation.substr(0, 1);
 	string rhs = equation.substr(eqlIndex + 1);
@@ -105,7 +105,7 @@ string Caculater::editEquation(string hash, int id, string equation) {
 	for (auto& v : varsInEqu) {
 		if (!(v == 'x' || v == 'y') && this->getVaribleByKey(v).id == -1) {
 			isError = true;
-			errorMessage = "Varible does not exist";
+			errorMessage = "Variable does not exist";
 			return this->viewer.editEquation(hash, isError, errorMessage, equ.id, equ.equ, equation);
 		}
 	}
@@ -176,18 +176,69 @@ string Caculater::getLine(string hash, int id, int dpi, double xMin, double xMax
 	return viewer.getLine(hash, x, y);
 }
 
+string Caculater::getAllLine(string hash, int dpi, double xMin, double xMax, double yMin, double yMax) {
+	vector<int> id;
+	vector<vector<double>> x;
+	vector<vector<double>> y;
+	ATMSP<double> parser;
+	for (int i = 0; i < this->equations.size(); i++) {
+		id.push_back(this->equations[i].id);
+		x.push_back(vector<double>());
+		y.push_back(vector<double>());
+		ATMSB<double> byteCode;
+		int xyIndex = 0;
+		for (int j = 0; j < this->equations[i].vars.size(); j++) {
+			if (this->equations[i].vars[j] == 'x' || this->equations[i].vars[j] == 'y') {
+				xyIndex = j;
+				continue;
+			}
+			else {
+				byteCode.var[j] = this->getVaribleByKey(this->equations[i].vars[j]).value;
+			}
+		}
+		stringstream ss;
+		std::copy(this->equations[i].vars.begin(), this->equations[i].vars.end(), ostream_iterator<char>(ss, ","));
+		string varStr = ss.str();
+		double xT = (xMax - xMin) / (dpi - 1);
+		double yT = (yMax - yMin) / (dpi - 1);
+		if (this->equations[i].lhs == "y") {
+			double xV = xMin;
+			for (int j = 0; j < dpi; j++, xV += xT) {
+				byteCode.var[xyIndex] = xV;
+				parser.parse(byteCode, this->equations[i].rhs, varStr);
+				x[i].push_back(xV);
+				y[i].push_back(byteCode.run());
+			}
+		}
+		else if (this->equations[i].lhs == "x") {
+			double yV = yMin;
+			for (int j = 0; j < dpi; j++, yV += yT) {
+				byteCode.var[xyIndex] = yV;
+				parser.parse(byteCode, this->equations[i].rhs, varStr);
+				x[i].push_back(byteCode.run());
+				y[i].push_back(yV);
+			}
+		}
+	}
+	return this->viewer.getAllLine(hash, id, x, y);
+}
+
+void Caculater::delEquation(string hash, int id) {
+	this->equations.erase(remove_if(this->equations.begin(), this->equations.end(), [id](Equation const& equ) { return equ.id == id; }), this->equations.end());
+}
+
 string Caculater::addVar(string hash, string equation) {
 	bool isError = false;
 	string errorMessage = "";
 	int eqlIndex = equation.find('=');
 	if (eqlIndex != 1) {
 		isError = true;
-		errorMessage = "Varible error";
+		errorMessage = "Variable error";
 	}
 	string lhs = equation.substr(0, 1);
 	if (this->getVaribleByKey(lhs).id != -1) {
 		isError = true;
-		errorMessage = "Varible already exists";
+		errorMessage = "Variable already exists";
 		return this->viewer.addVar(hash, isError, errorMessage, -1, equation);
 	}
 	string rhs = equation.substr(eqlIndex + 1);
@@ -195,18 +246,18 @@ string Caculater::addVar(string hash, string equation) {
 	for (auto& v : varsInEqu) {
 		if (v == lhs.c_str()[0]) {
 			isError = true;
-			errorMessage = "Loop definition varible";
+			errorMessage = "Loop definition Variable";
 			return this->viewer.addVar(hash, isError, errorMessage, -1, equation);
 		}
 		else if (this->getVaribleByKey(v).id == -1) {
 			isError = true;
-			errorMessage = "Varible does not exist";
+			errorMessage = "Variable does not exist";
 			return this->viewer.addVar(hash, isError, errorMessage, -1, equation);
 		}
 		for (auto& vE : this->getVaribleByKey(v).vars) {
 			if (vE == lhs.c_str()[0]) {
 				isError = true;
-				errorMessage = "Loop definition varible";
+				errorMessage = "Loop definition Variable";
 				return this->viewer.addVar(hash, isError, errorMessage, -1, equation);
 			}
 		}
@@ -223,24 +274,24 @@ string Caculater::addVar(string hash, string equation) {
 		errorMessage = "Equation format error";
 		return viewer.addVar(hash, isError, errorMessage, -1, equation);
 	}
-	Varible newVar(this->idCounter++, byteCode.run(), equation, varsInEqu, lhs, rhs);
+	Variable newVar(this->idCounter++, byteCode.run(), equation, varsInEqu, lhs, rhs);
 	this->vars.push_back(newVar);
 	return viewer.addVar(hash, isError, errorMessage, newVar.id, newVar.equ);
 }
 
 string Caculater::editVar(string hash, int id, string equation) {
-	Varible& var = this->getVaribleById(id);
+	Variable& var = this->getVaribleById(id);
 	bool isError = false;
 	string errorMessage = "";
 	int eqlIndex = equation.find('=');
 	if (eqlIndex != 1) {
 		isError = true;
-		errorMessage = "Varible error";
+		errorMessage = "Variable error";
 	}
 	string lhs = equation.substr(0, 1);
 	if (lhs != var.lhs && this->getVaribleByKey(lhs).id != -1) {
 		isError = true;
-		errorMessage = "Varible already exists";
+		errorMessage = "Variable already exists";
 		return this->viewer.editVar(hash, isError, errorMessage, var.id, var.equ, equation);
 	}
 	string rhs = equation.substr(eqlIndex + 1);
@@ -248,18 +299,18 @@ string Caculater::editVar(string hash, int id, string equation) {
 	for (auto& v : varsInEqu) {
 		if (v == lhs.c_str()[0]) {
 			isError = true;
-			errorMessage = "Loop definition varible";
+			errorMessage = "Loop definition Variable";
 			return this->viewer.editVar(hash, isError, errorMessage, var.id, var.equ, equation);
 		}
 		else if (this->getVaribleByKey(v).id == -1) {
 			isError = true;
-			errorMessage = "Varible does not exist";
+			errorMessage = "Variable does not exist";
 			return this->viewer.editVar(hash, isError, errorMessage, var.id, var.equ, equation);
 		}
 		for (auto& vE : this->getVaribleByKey(v).vars) {
 			if (vE == lhs.c_str()[0]) {
 				isError = true;
-				errorMessage = "Loop definition varible";
+				errorMessage = "Loop definition Variable";
 				return this->viewer.editVar(hash, isError, errorMessage, var.id, var.equ, equation);
 			}
 		}
@@ -286,6 +337,17 @@ string Caculater::editVar(string hash, int id, string equation) {
 	return viewer.editVar(hash, isError, errorMessage, var.id, srcEqu, var.equ);
 }
 
+string Caculater::delVar(string hash, int id) {
+	Variable var = this->getVaribleById(id);
+	for (auto& equ : this->equations) {
+		if (find(equ.vars.begin(), equ.vars.end(), var.lhs.c_str()[0]) != equ.vars.end()) {
+			return this->viewer.delVar(hash, true, "Variable is being used");
+		}
+	}
+	this->vars.erase(remove_if(this->vars.begin(), this->vars.end(), [id](Variable const& v) { return v.id == id; }), this->vars.end());
+	return this->viewer.delVar(hash, false, "");
+}
+
 Equation& Caculater::getEquationById(int id) {
 	for (auto& equ : this->equations) {
 		if (equ.id == id) {
@@ -294,7 +356,7 @@ Equation& Caculater::getEquationById(int id) {
 	}
 }
 
-Varible& Caculater::getVaribleById(int id) {
+Variable& Caculater::getVaribleById(int id) {
 	for (auto& v : this->vars) {
 		if (v.id == id) {
 			return v;
@@ -302,23 +364,23 @@ Varible& Caculater::getVaribleById(int id) {
 	}
 }
 
-Varible& Caculater::getVaribleByKey(string key) {
+Variable& Caculater::getVaribleByKey(string key) {
 	for (auto& v : this->vars) {
 		if (v.lhs == key) {
 			return v;
 		}
 	}
-	Varible var(-1);
+	Variable var(-1);
 	return var;
 }
 
-Varible& Caculater::getVaribleByKey(char key) {
+Variable& Caculater::getVaribleByKey(char key) {
 	for (auto& v : this->vars) {
 		if (v.lhs.c_str()[0] == key) {
 			return v;
 		}
 	}
-	Varible var(-1);
+	Variable var(-1);
 	return var;
 }
 

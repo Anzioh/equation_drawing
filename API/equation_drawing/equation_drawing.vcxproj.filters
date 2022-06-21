@@ -27,7 +27,7 @@
     <ClCompile Include="Equation.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
-    <ClCompile Include="Varible.cpp">
+    <ClCompile Include="Variable.cpp">
       <Filter>來源檔案</Filter>
     </ClCompile>
   </ItemGroup>
@@ -41,7 +41,7 @@
     <ClInclude Include="Equation.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
-    <ClInclude Include="Varible.h">
+    <ClInclude Include="Variable.h">
       <Filter>標頭檔</Filter>
     </ClInclude>
   </ItemGroup>
