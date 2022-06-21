@@ -11,6 +11,18 @@ string Viewer::addEquation(string hash, bool isError, string errorMessage, int i
 	return response.dump();
 }
 
+string Viewer::editEquation(string hash, bool isError, string errorMessage, int id, string srcEquation, string equation) {
+	json response = {
+		{"id", id},
+		{"srcEquation", srcEquation},
+		{"equation", equation},
+		{"isError", isError},
+		{"errorMessage", errorMessage},
+		{"hash", hash}
+	};
+	return response.dump();
+}
+
 string Viewer::getLine(string hash, vector<double> x, vector<double> y) {
 	json response = {
 		{"x", x},
