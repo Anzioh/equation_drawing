@@ -61,19 +61,27 @@ string Caculater::addEquation(string hash, string equation) {
 	string lhs = equation.substr(0, 1);
 	string rhs = equation.substr(eqlIndex + 1);
 	vector<char> varsInEqu = getVarInFormula(rhs);
+	for (auto& v : varsInEqu) {
+		if (!(v == 'x' || v == 'y') && this->getVaribleByKey(v).id == -1) {
+			isError = true;
+			errorMessage = "Varible does not exist";
+			return this->viewer.addEquation(hash, isError, errorMessage, -1, equation);
+		}
+	}
+
 	ATMSP<double> parser;
 	ATMSB<double> byteCode;
 	for (int i = 0; i < varsInEqu.size(); i++) {
 		byteCode.var[i] = 1;
 	}
 	stringstream ss;
-	copy(varsInEqu.begin(), varsInEqu.end(), ostream_iterator<char>(ss, ","));
+	std::copy(varsInEqu.begin(), varsInEqu.end(), ostream_iterator<char>(ss, ","));
 	if (parser.parse(byteCode, rhs, ss.str())) {
 		isError = true;
 		errorMessage = "Equation format error";
 	}
 	if (isError) {
-		return viewer.addEquation(hash, isError, errorMessage, -1, "");
+		return viewer.addEquation(hash, isError, errorMessage, -1, equation);
 	}
 	else {
 		Equation newEqu(this->idCounter++, equation, varsInEqu, lhs, rhs);
@@ -94,13 +102,20 @@ string Caculater::editEquation(string hash, int id, string equation) {
 	string lhs = equation.substr(0, 1);
 	string rhs = equation.substr(eqlIndex + 1);
 	vector<char> varsInEqu = getVarInFormula(rhs);
+	for (auto& v : varsInEqu) {
+		if (!(v == 'x' || v == 'y') && this->getVaribleByKey(v).id == -1) {
+			isError = true;
+			errorMessage = "Varible does not exist";
+			return this->viewer.editEquation(hash, isError, errorMessage, equ.id, equ.equ, equation);
+		}
+	}
 	ATMSP<double> parser;
 	ATMSB<double> byteCode;
 	for (int i = 0; i < varsInEqu.size(); i++) {
 		byteCode.var[i] = 1;
 	}
 	stringstream ss;
-	copy(varsInEqu.begin(), varsInEqu.end(), ostream_iterator<char>(ss, ","));
+	std::copy(varsInEqu.begin(), varsInEqu.end(), ostream_iterator<char>(ss, ","));
 	if (parser.parse(byteCode, rhs, ss.str())) {
 		isError = true;
 		errorMessage = "Equation format error";
@@ -132,11 +147,11 @@ string Caculater::getLine(string hash, int id, int dpi, double xMin, double xMax
 			continue;
 		}
 		else {
-			byteCode.var[i] = this->vars.find(equ.vars[i])->second;
+			byteCode.var[i] = this->getVaribleByKey(equ.vars[i]).value;
 		}
 	}
 	stringstream ss;
-	copy(equ.vars.begin(), equ.vars.end(), ostream_iterator<char>(ss, ","));
+	std::copy(equ.vars.begin(), equ.vars.end(), ostream_iterator<char>(ss, ","));
 	string varStr = ss.str();
 	double xT = (xMax - xMin) / (dpi - 1);
 	double yT = (yMax - yMin) / (dpi - 1);
@@ -161,6 +176,116 @@ string Caculater::getLine(string hash, int id, int dpi, double xMin, double xMax
 	return viewer.getLine(hash, x, y);
 }
 
+string Caculater::addVar(string hash, string equation) {
+	bool isError = false;
+	string errorMessage = "";
+	int eqlIndex = equation.find('=');
+	if (eqlIndex != 1) {
+		isError = true;
+		errorMessage = "Varible error";
+	}
+	string lhs = equation.substr(0, 1);
+	if (this->getVaribleByKey(lhs).id != -1) {
+		isError = true;
+		errorMessage = "Varible already exists";
+		return this->viewer.addVar(hash, isError, errorMessage, -1, equation);
+	}
+	string rhs = equation.substr(eqlIndex + 1);
+	vector<char> varsInEqu = getVarInFormula(rhs);
+	for (auto& v : varsInEqu) {
+		if (v == lhs.c_str()[0]) {
+			isError = true;
+			errorMessage = "Loop definition varible";
+			return this->viewer.addVar(hash, isError, errorMessage, -1, equation);
+		}
+		else if (this->getVaribleByKey(v).id == -1) {
+			isError = true;
+			errorMessage = "Varible does not exist";
+			return this->viewer.addVar(hash, isError, errorMessage, -1, equation);
+		}
+		for (auto& vE : this->getVaribleByKey(v).vars) {
+			if (vE == lhs.c_str()[0]) {
+				isError = true;
+				errorMessage = "Loop definition varible";
+				return this->viewer.addVar(hash, isError, errorMessage, -1, equation);
+			}
+		}
+	}
+	ATMSP<double> parser;
+	ATMSB<double> byteCode;
+	for (int i = 0; i < varsInEqu.size(); i++) {
+		byteCode.var[i] = this->getVaribleByKey(varsInEqu[i]).value;
+	}
+	stringstream ss;
+	std::copy(varsInEqu.begin(), varsInEqu.end(), ostream_iterator<char>(ss, ","));
+	if (parser.parse(byteCode, rhs, ss.str())) {
+		isError = true;
+		errorMessage = "Equation format error";
+		return viewer.addVar(hash, isError, errorMessage, -1, equation);
+	}
+	Varible newVar(this->idCounter++, byteCode.run(), equation, varsInEqu, lhs, rhs);
+	this->vars.push_back(newVar);
+	return viewer.addVar(hash, isError, errorMessage, newVar.id, newVar.equ);
+}
+
+string Caculater::editVar(string hash, int id, string equation) {
+	Varible& var = this->getVaribleById(id);
+	bool isError = false;
+	string errorMessage = "";
+	int eqlIndex = equation.find('=');
+	if (eqlIndex != 1) {
+		isError = true;
+		errorMessage = "Varible error";
+	}
+	string lhs = equation.substr(0, 1);
+	if (lhs != var.lhs && this->getVaribleByKey(lhs).id != -1) {
+		isError = true;
+		errorMessage = "Varible already exists";
+		return this->viewer.editVar(hash, isError, errorMessage, var.id, var.equ, equation);
+	}
+	string rhs = equation.substr(eqlIndex + 1);
+	vector<char> varsInEqu = getVarInFormula(rhs);
+	for (auto& v : varsInEqu) {
+		if (v == lhs.c_str()[0]) {
+			isError = true;
+			errorMessage = "Loop definition varible";
+			return this->viewer.editVar(hash, isError, errorMessage, var.id, var.equ, equation);
+		}
+		else if (this->getVaribleByKey(v).id == -1) {
+			isError = true;
+			errorMessage = "Varible does not exist";
+			return this->viewer.editVar(hash, isError, errorMessage, var.id, var.equ, equation);
+		}
+		for (auto& vE : this->getVaribleByKey(v).vars) {
+			if (vE == lhs.c_str()[0]) {
+				isError = true;
+				errorMessage = "Loop definition varible";
+				return this->viewer.editVar(hash, isError, errorMessage, var.id, var.equ, equation);
+			}
+		}
+	}
+	ATMSP<double> parser;
+	ATMSB<double> byteCode;
+	for (int i = 0; i < varsInEqu.size(); i++) {
+		byteCode.var[i] = this->getVaribleByKey(varsInEqu[i]).value;
+	}
+	stringstream ss;
+	std::copy(varsInEqu.begin(), varsInEqu.end(), ostream_iterator<char>(ss, ","));
+	if (parser.parse(byteCode, rhs, ss.str())) {
+		isError = true;
+		errorMessage = "Equation format error";
+		return viewer.editVar(hash, isError, errorMessage, var.id, var.equ, equation);
+	}
+	string srcEqu = var.equ;
+	var.equ = equation;
+	var.lhs = lhs;
+	var.rhs = rhs;
+	var.vars = varsInEqu;
+	var.value = byteCode.run();
+	this->refreshAllVarsValue();
+	return viewer.editVar(hash, isError, errorMessage, var.id, srcEqu, var.equ);
+}
+
 Equation& Caculater::getEquationById(int id) {
 	for (auto& equ : this->equations) {
 		if (equ.id == id) {
@@ -168,3 +293,46 @@ Equation& Caculater::getEquationById(int id) {
 		}
 	}
 }
+
+Varible& Caculater::getVaribleById(int id) {
+	for (auto& v : this->vars) {
+		if (v.id == id) {
+			return v;
+		}
+	}
+}
+
+Varible& Caculater::getVaribleByKey(string key) {
+	for (auto& v : this->vars) {
+		if (v.lhs == key) {
+			return v;
+		}
+	}
+	Varible var(-1);
+	return var;
+}
+
+Varible& Caculater::getVaribleByKey(char key) {
+	for (auto& v : this->vars) {
+		if (v.lhs.c_str()[0] == key) {
+			return v;
+		}
+	}
+	Varible var(-1);
+	return var;
+}
+
+void Caculater::refreshAllVarsValue() {
+	for (auto& v : this->vars) {
+		ATMSP<double> parser;
+		ATMSB<double> byteCode;
+		for (int i = 0; i < v.vars.size(); i++) {
+			byteCode.var[i] = this->getVaribleByKey(v.vars[i]).value;
+		}
+		stringstream ss;
+		std::copy(v.vars.begin(), v.vars.end(), ostream_iterator<char>(ss, ","));
+		parser.parse(byteCode, v.rhs, ss.str());
+		v.value = byteCode.run();
+	}
+}
+
