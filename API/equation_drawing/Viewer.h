@@ -11,7 +11,7 @@ public:
 	string addEquation(string hash, bool isError, string errorMessage, int id, string equation);
 	string editEquation(string hash, bool isError, string errorMessage, int id, string srcEquation, string equation);
 	string getLine(string hash, vector<double> x, vector<double> y);
-	string getAllLine(string hash);
+	string getAllLine(string hash, vector<int> id, vector<vector<double>> x, vector<vector<double>> y);
 	string addVar(string hash, bool isError, string errorMessage, int id, string equation);
 	string editVar(string hash, bool isError, string errorMessage, int id, string srcEquation, string equation);
 	string apiTest(string hash, string content);

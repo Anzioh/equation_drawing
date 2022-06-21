@@ -15,6 +15,12 @@ int main() {
 			cin >> id >> dpi >> xMin >> xMax >> yMin >> yMax;
 			cout << cal.getLine(hash, id, dpi, xMin, xMax, yMin, yMax);
 		}
+		else if (opt == "getAllLine") {
+			int  dpi;
+			double xMin, xMax, yMin, yMax;
+			cin >> dpi >> xMin >> xMax >> yMin >> yMax;
+			cout << cal.getAllLine(hash, dpi, xMin, xMax, yMin, yMax);
+		}
 		else if (opt == "addEquation") {
 			string equation;
 			cin >> equation;

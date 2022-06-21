@@ -32,6 +32,22 @@ string Viewer::getLine(string hash, vector<double> x, vector<double> y) {
 	return response.dump();
 }
 
+string Viewer::getAllLine(string hash, vector<int> id, vector<vector<double>> x, vector<vector<double>> y) {
+	json response = {
+		{"hash", hash}
+	};
+	response["equations"] = json::array();
+	for (int i = 0; i < id.size(); i++) {
+		json equ = json::object({
+			{"id", id[i]},
+			{"x", x[i]},
+			{"y", y[i]}
+			});
+		response["equations"].push_back(equ);
+	}
+	return response.dump();
+}
+
 string Viewer::addVar(string hash, bool isError, string errorMessage, int id, string equation) {
 	json response = {
 		{"id", id},

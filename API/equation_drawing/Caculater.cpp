@@ -176,6 +176,53 @@ string Caculater::getLine(string hash, int id, int dpi, double xMin, double xMax
 	return viewer.getLine(hash, x, y);
 }
 
+string Caculater::getAllLine(string hash, int dpi, double xMin, double xMax, double yMin, double yMax) {
+	vector<int> id;
+	vector<vector<double>> x;
+	vector<vector<double>> y;
+	ATMSP<double> parser;
+	for (int i = 0; i < this->equations.size(); i++) {
+		id.push_back(this->equations[i].id);
+		x.push_back(vector<double>());
+		y.push_back(vector<double>());
+		ATMSB<double> byteCode;
+		int xyIndex = 0;
+		for (int j = 0; j < this->equations[i].vars.size(); j++) {
+			if (this->equations[i].vars[j] == 'x' || this->equations[i].vars[j] == 'y') {
+				xyIndex = j;
+				continue;
+			}
+			else {
+				byteCode.var[j] = this->getVaribleByKey(this->equations[i].vars[j]).value;
+			}
+		}
+		stringstream ss;
+		std::copy(this->equations[i].vars.begin(), this->equations[i].vars.end(), ostream_iterator<char>(ss, ","));
+		string varStr = ss.str();
+		double xT = (xMax - xMin) / (dpi - 1);
+		double yT = (yMax - yMin) / (dpi - 1);
+		if (this->equations[i].lhs == "y") {
+			double xV = xMin;
+			for (int j = 0; j < dpi; j++, xV += xT) {
+				byteCode.var[xyIndex] = xV;
+				parser.parse(byteCode, this->equations[i].rhs, varStr);
+				x[i].push_back(xV);
+				y[i].push_back(byteCode.run());
+			}
+		}
+		else if (this->equations[i].lhs == "x") {
+			double yV = yMin;
+			for (int j = 0; j < dpi; j++, yV += yT) {
+				byteCode.var[xyIndex] = yV;
+				parser.parse(byteCode, this->equations[i].rhs, varStr);
+				x[i].push_back(byteCode.run());
+				y[i].push_back(yV);
+			}
+		}
+	}
+	return this->viewer.getAllLine(hash, id, x, y);
+}
+
 string Caculater::addVar(string hash, string equation) {
 	bool isError = false;
 	string errorMessage = "";
