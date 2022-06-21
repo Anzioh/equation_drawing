@@ -1,22 +1,15 @@
 import { defineStore } from 'pinia'
-import child_process from 'child_process'
+import { exec } from 'node:child_process'
 import { Request } from '@/models/request'
-import { ref } from 'vue'
-
-const os = window.navigator.platform
-const isMac = os.match(/Mac/gi)
+import { ref, toRaw } from 'vue'
 
 export const useGlobalStore = defineStore('global', {
   state: () => {
     return {
-      process: child_process.execFile(
-        `./assets/binary/${isMac ? 'macOS' : 'Windows'}/equation_drawing${
-          isMac ? '' : '.exe'
-        }`
-      ),
+      process: null,
       responseStacks: ref<Request[]>([]),
       responseStringCache: '', // if c++ return a very long json
-      apiTimeOut: 5000,
+      apiTimeOut: 10000,
     }
   },
   getters: {
@@ -26,6 +19,11 @@ export const useGlobalStore = defineStore('global', {
         return e.completed
       })
     },
+    isMac: (): boolean => {
+      const os: string = window.navigator.platform;
+      const result = Array(os.match(/Mac/gi)).length > 0;
+      return result;
+    }
   },
   actions: {
     // wait all the request are completed
@@ -68,5 +66,27 @@ export const useGlobalStore = defineStore('global', {
         }
       })
     },
+    // get token
+    getToken(): string {
+      let random = [...Array(8).keys()].map(e => String.fromCharCode(Math.floor((Math.random() * (126 - 47)) + 48))).join("");
+      let cacheToken = Date.now().toString(16) + random + "";
+      let token = cacheToken.split('').sort((a, b) => Math.floor(Math.random() - 0.5)).join("");
+      return token;
+    },
+    // get response log by token
+    getResLogByToken(token: string) {
+      let result:any = false;
+      this.responseStacks.forEach(response => {
+        if (response.token == token) {
+          result = response;
+        }
+      })
+      return result;
+    },
+    // write by stdin
+    apiSent: function (commend: string) {
+      const api:any = toRaw(this.process);
+      api.stdin.write(commend + '\n');
+    }
   },
 })

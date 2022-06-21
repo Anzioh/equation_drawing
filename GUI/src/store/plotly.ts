@@ -42,7 +42,9 @@ export const usePlotlyStore = defineStore("plotly", {
                 responsive: true
             }),
             equations: ref<Equation[]>([]),
-            variables: ref<Variable[]>([])
+            variables: ref<Variable[]>([]),
+            // isError: ref(null), // edit or add error status(include: equation, variable)
+            // isFilling: ref(false), // is prompt open(include: equation, variable)
         }
     },
     getters: {
@@ -53,7 +55,17 @@ export const usePlotlyStore = defineStore("plotly", {
             console.log(this.plotly, "plotly");
         },
         getRandomColor(): string {
-            return Math.floor(Math.random()*16777215).toString(16);
+            return '#' + Math.floor(Math.random() * 16777215).toString(16);
+        },
+        // get equation info by id
+        getEquationMain(id: number) {
+            let result:any = false;
+            this.equations.forEach(item => {
+                if (item.id == id) {
+                    result = item;
+                }
+            })
+            return result;
         }
     }
 })

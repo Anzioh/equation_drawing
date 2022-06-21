@@ -118,7 +118,7 @@ p {
 .el-switch__core {
   height: 20.01px !important;
 }
-
+/* pretty-card */
 .pretty-card {
   position: relative;
   width: 100%;
@@ -170,7 +170,7 @@ p {
 .pretty-card .el-color-picker__icon {
   margin-left: 7.5px;
 }
-
+/* plotly.js modeBar Fix */
 .plotly .modebar-group {
   float: unset!important;
   padding-left: 0!important;

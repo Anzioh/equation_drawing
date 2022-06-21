@@ -13,18 +13,22 @@
 
 <script>
 import { storeToRefs } from 'pinia'
+import { ref, toRaw, reactive } from 'vue'
 import { useGlobalStore } from '@/store/global'
-import { usePlotlyStore } from "@/store/plotly";
+import { usePlotlyStore } from "@/store/plotly"
+import { exec } from "child_process"
 import Menu from '@/components/Menu'
 import Draw from '@/components/Draw'
 
 export default {
   setup() {
-    const globalStore = useGlobalStore();
+    const globalStore = reactive(useGlobalStore());
     const plotlyStore = usePlotlyStore();
-    const { process } = storeToRefs(useGlobalStore())
+    const { process, responseStacks, responseStringCache } = storeToRefs(useGlobalStore())
     return {
       process,
+      responseStacks,
+      responseStringCache,
       globalStore,
       plotlyStore
     }
@@ -33,9 +37,43 @@ export default {
     Menu,
     Draw,
   },
-  mounted() {
-    console.log(this.process);
+  beforeMount() {
+    this.globalStore.process = exec(`./src/assets/binary/${this.globalStore.isMac ? 'macOS' : 'Windows'}/equation_drawing${this.globalStore.isMac ? '' : '.exe'}`);
   },
+  mounted() {
+    this.globalStore.process.stdout.on("data", (response) => {
+      this.receiveData(response);
+    })
+    this.globalStore.process.on('close', (code) => {
+      console.log(`child process close all stdio with code ${code}`);
+    });
+
+    this.globalStore.process.on('exit', (code) => {
+      console.log(`child process exited with code ${code}`);
+    });
+  },
+  async beforeUnmount() {
+    await this.globalStore.waitAllReqCompleted(true);
+    this.globalStore.process.removeAllListeners();
+  },
+  methods: {
+    receiveData(response) {
+      console.log(response);
+      try {
+        const data = JSON.parse(this.responseStringCache + response);
+        let thisResponseIndex = this.responseStacks.map(e => e.token).indexOf(data.hash);
+        if (thisResponseIndex > -1 && !this.responseStacks[thisResponseIndex].completed) {
+          this.responseStringCache = "";
+          this.responseStacks[thisResponseIndex].completed = true;
+          this.responseStacks[thisResponseIndex].callback(data);
+          this.responseStacks[thisResponseIndex].result = data;
+          console.log(data);
+        }
+      }catch (e) {
+        this.responseStringCache += response; // push some json string to cache
+      }
+    }
+  }
 }
 </script>
 

@@ -8,7 +8,13 @@
         <p class="m-0 text-secondary">方程組</p>
         <el-button size="small" type="primary" icon="Plus" @click="addEquation" circle plain></el-button>
       </div>
-      <Equation></Equation>
+      <Equation
+          v-for="item in equations"
+          :id="item.id"
+          :srcEquation="item.srcEquation"
+          :equation="item.equation"
+          :color="item.color"
+          :tokenList="item.tokenList"></Equation>
     </div>
     <div class="vh-45">
       <div class="fbc">
@@ -21,39 +27,92 @@
 </template>
 
 <script>
+  import { storeToRefs } from "pinia";
   import { useGlobalStore } from "@/store/global";
+  import { usePlotlyStore } from "@/store/plotly";
   import Equation from "@/components/Equation";
   import Variable from "@/components/Variable";
   import { ElMessage, ElMessageBox } from 'element-plus';
   export default {
+    setup() {
+      const globalStore = useGlobalStore();
+      const plotlyStore = usePlotlyStore();
+      const { process, responseStacks } = storeToRefs(useGlobalStore());
+      const { equations } = storeToRefs(usePlotlyStore());
+      return {
+        globalStore,
+        plotlyStore,
+        process,
+        responseStacks,
+        equations
+      }
+    },
     components: {
       Equation,
       Variable
     },
     methods: {
-      addEquation() {
+      async addEquation() {
         ElMessageBox.prompt('enter your equation: ', 'Add Equation', {
           confirmButtonText: 'Add',
           cancelButtonText: 'Cancel',
-          beforeClose: (action, instance, done) => {
+          beforeClose: async (action, instance, done) => {
             if (action === 'confirm') {
-              instance.confirmButtonLoading = true
-              instance.confirmButtonText = 'Loading...'
-              setTimeout(() => {
-                done()
-                setTimeout(() => {
-                  instance.confirmButtonLoading = false
-                }, 300)
-              }, 3000)
+              if (! instance.inputValue) {
+                ElMessage({
+                  type: 'error',
+                  message: 'field should have text'
+                })
+                return;
+              }
+              instance.confirmButtonLoading = true;
+              instance.confirmButtonText = 'Loading...';
+              // call c++ API
+              const token = await this.api_addEquation(instance.inputValue);
+              let interval = setInterval(() => {
+                const response = this.globalStore.getResLogByToken(token);
+                if (response) {
+                  if (response.completed) {
+                    // has completed
+                    clearInterval(interval);
+                    setTimeout(() => {
+                      instance.confirmButtonLoading = false
+                      instance.confirmButtonText = 'Add'
+                    }, 300);
+                    const data = response.result;
+                    if (data.isError) {
+                      ElMessage({
+                        type: 'error',
+                        message: data.errorMessage
+                      })
+                    }
+                    else {
+                      this.equations.push({
+                        id: data.id,
+                        color: this.plotlyStore.getRandomColor(),
+                        equation: data.equation,
+                        srcEquation: instance.inputValue,
+                        x: [],
+                        y: [],
+                        tokenList: [token]
+                      });
+                      done();
+                    }
+                  }
+                }
+              },1000)
             } else {
               done()
             }
           },
         }).then((action) => {
-          ElMessage({
-            type: 'info',
-            message: `action: ${action}`,
-          })
+          // action
+          if (action === 'confirm') {
+            ElMessage({
+              type: 'success',
+              message: 'Add Success',
+            })
+          }
         }).catch(() => {
           ElMessage({
             type: 'info',
@@ -61,8 +120,21 @@
           })
         })
       },
-      editEquation(id) {
-
+      async api_addEquation(equation) {
+        equation = equation == null ? "" : equation;
+        await this.globalStore.waitAllReqCompleted();
+        const token = this.globalStore.getToken();
+        const commend = `addEquation ${token} ${equation.replace(/\s/g, '')}`;
+        this.responseStacks.push({
+          method: "addEquation",
+          commend: commend,
+          token: token,
+          completed: false,
+          result: null,
+          callback: () => {}
+        });
+        this.globalStore.apiSent(commend);
+        return token;
       }
     }
   }
