@@ -23,7 +23,7 @@ public:
 	string editEquation(string hash, int id, string equation);
 	string getLine(string hash, int id, int dpi, double xMin, double xMax, double yMin, double yMax);
 	string getAllLine(string hash, int dpi, double xMin, double xMax, double yMin, double yMax);
-	void delEquation(string hash, int id);
+	string delEquation(string hash, int id);
 	string addVar(string hash, string equation);
 	string editVar(string hash, int id, string equation);
 	string delVar(string hash, int id);

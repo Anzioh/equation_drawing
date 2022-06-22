@@ -10,6 +10,7 @@ class Viewer {
 public:
 	string addEquation(string hash, bool isError, string errorMessage, int id, string equation);
 	string editEquation(string hash, bool isError, string errorMessage, int id, string srcEquation, string equation);
+	string delEquation(string hash, bool isError, string errorMessage);
 	string getLine(string hash, vector<double> x, vector<double> y);
 	string getAllLine(string hash, vector<int> id, vector<vector<double>> x, vector<vector<double>> y);
 	string addVar(string hash, bool isError, string errorMessage, int id, string equation);

@@ -23,6 +23,15 @@ string Viewer::editEquation(string hash, bool isError, string errorMessage, int 
 	return response.dump();
 }
 
+string Viewer::delEquation(string hash, bool isError, string errorMessage) {
+	json response = {
+		{"isError", isError},
+		{"errorMessage", errorMessage},
+		{"hash", hash}
+	};
+	return response.dump();
+}
+
 string Viewer::getLine(string hash, vector<double> x, vector<double> y) {
 	json response = {
 		{"x", x},

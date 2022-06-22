@@ -223,8 +223,9 @@ string Caculater::getAllLine(string hash, int dpi, double xMin, double xMax, dou
 	return this->viewer.getAllLine(hash, id, x, y);
 }
 
-void Caculater::delEquation(string hash, int id) {
+string Caculater::delEquation(string hash, int id) {
 	this->equations.erase(remove_if(this->equations.begin(), this->equations.end(), [id](Equation const& equ) { return equ.id == id; }), this->equations.end());
+	return this->viewer.delEquation(hash, false, "");
 }
 
 string Caculater::addVar(string hash, string equation) {

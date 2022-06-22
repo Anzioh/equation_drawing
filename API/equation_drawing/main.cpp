@@ -35,7 +35,7 @@ int main() {
 		else if (opt == "delEquation") {
 			int id;
 			cin >> id;
-			cal.delEquation(hash, id);
+			cout << cal.delEquation(hash, id);
 		}
 		else if (opt == "addVar") {
 			string equation;
