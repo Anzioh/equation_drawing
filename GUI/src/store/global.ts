@@ -33,37 +33,46 @@ export const useGlobalStore = defineStore('global', {
         const timeOut = setTimeout(() => {
           // force complete all response
           if (!this.checkAllSet) {
-            let fails: Request[] = []
+            let fails: Request[] = [];
             this.responseStacks = this.responseStacks.map((e: Request) => {
               if (!e.completed) {
-                fails.push(e)
+                fails.push(toRaw(e));
               }
               if (forceCompleted) {
-                e.completed = true
+                e.completed = true;
               }
-              return e
+              return e;
             })
-            clearTimeout(timeOut)
-            clearInterval(interval)
+            clearTimeout(timeOut);
+            clearInterval(interval);
             console.error(
               'ERROR: API response time out',
               fails,
               this.responseStacks
-            )
+            );
           }
-          resolve()
+          if (this.apiConsole) {
+            console.log('waitAllReqCompleted resolve');
+          }
+          resolve();
         }, this.apiTimeOut)
         const interval = setInterval(() => {
           if (this.checkAllSet) {
-            clearInterval(interval)
-            clearTimeout(timeOut)
-            resolve()
+            clearInterval(interval);
+            clearTimeout(timeOut);
+            if (this.apiConsole) {
+              console.log('waitAllReqCompleted resolve');
+            }
+            resolve();
           }
         }, 50)
         if (this.checkAllSet) {
-          clearInterval(interval)
-          clearTimeout(timeOut)
-          resolve()
+          clearInterval(interval);
+          clearTimeout(timeOut);
+          if (this.apiConsole) {
+            console.log('waitAllReqCompleted resolve');
+          }
+          resolve();
         }
       })
     },

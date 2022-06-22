@@ -46,7 +46,6 @@ export default {
     this.globalStore.process.on('close', (code) => {
       console.log(`child process close all stdio with code ${code}`);
     });
-
     this.globalStore.process.on('exit', (code) => {
       console.log(`child process exited with code ${code}`);
     });
@@ -65,6 +64,9 @@ export default {
           this.responseStacks[thisResponseIndex].completed = true;
           this.responseStacks[thisResponseIndex].callback(data);
           this.responseStacks[thisResponseIndex].result = data;
+        }
+        if (this.globalStore.apiConsole) {
+          console.log(data);
         }
       }catch (e) {
         this.responseStringCache += response; // push some json string to cache

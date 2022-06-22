@@ -35,6 +35,7 @@
   import Variable from "@/components/Variable";
   import MenuFooter from "@/components/MenuFooter";
   import { ElMessage, ElMessageBox } from 'element-plus';
+  import {toRaw} from "vue";
   export default {
     setup() {
       const globalStore = useGlobalStore();
@@ -76,7 +77,7 @@
               // call c++ API
               const newEquation = instance.inputValue.replace(/\s/ig, '');
               const token = await this.api_addEquation(newEquation);
-              let interval = await setInterval(async () => {
+              let interval = setInterval(async () => {
                 const response = this.globalStore.getResLogByToken(token);
                 if (response) {
                   if (response.completed) {
@@ -92,8 +93,7 @@
                         type: 'error',
                         message: data.errorMessage
                       })
-                    }
-                    else {
+                    } else {
                       this.equations.push({
                         id: data.id,
                         color: this.plotlyStore.getRandomColor(),
@@ -108,7 +108,7 @@
                     }
                   }
                 }
-              },1000)
+              }, 1000)
             } else {
               done()
             }
@@ -182,7 +182,7 @@
               // call c++ API
               const newEquation = instance.inputValue.replace(/\s/ig, '');
               const token = await this.api_addVariable(newEquation);
-              let interval = await setInterval(async () => {
+              let interval = setInterval(async () => {
                 const response = this.globalStore.getResLogByToken(token);
                 if (response) {
                   if (response.completed) {
@@ -266,7 +266,7 @@
               // call c++ API
               const newEquation = instance.inputValue.replace(/\s/ig, '');
               const token = await this.api_editVariable(data, newEquation);
-              let interval = await setInterval(async () => {
+              let interval = setInterval(async () => {
                 const response = this.globalStore.getResLogByToken(token);
                 if (response) {
                   if (response.completed) {
@@ -359,7 +359,8 @@
       async api_getLine(id) {
         await this.globalStore.waitAllReqCompleted();
         const token = this.globalStore.getToken();
-        const rangeStr = `${this.plotlyRange.x.start.toFixed(10)} ${this.plotlyRange.x.end.toFixed(10)} ${this.plotlyRange.y.start.toFixed(10)} ${this.plotlyRange.y.end.toFixed(10)}`;
+        const range = toRaw(this.plotlyRange);
+        const rangeStr = `${range.x.start.toFixed(10)} ${range.x.end.toFixed(10)} ${range.y.start.toFixed(10)} ${range.y.end.toFixed(10)}`;
         const commend = `getLine ${token} ${id} ${this.dpi} ${rangeStr}`;
         this.responseStacks.push({
           method: "getLine",
@@ -385,7 +386,9 @@
         }
         await this.globalStore.waitAllReqCompleted();
         const token = this.globalStore.getToken();
-        const rangeStr = `${this.plotlyRange.x.start.toFixed(10)} ${this.plotlyRange.x.end.toFixed(10)} ${this.plotlyRange.y.start.toFixed(10)} ${this.plotlyRange.y.end.toFixed(10)}`;
+        const range = toRaw(this.plotlyRange);
+        console.log(range);
+        const rangeStr = `${range.x.start.toFixed(10)} ${range.x.end.toFixed(10)} ${range.y.start.toFixed(10)} ${range.y.end.toFixed(10)}`;
         const commend = `getAllLine ${token} ${this.dpi} ${rangeStr}`;
         this.responseStacks.push({
           method: "getAllLine",

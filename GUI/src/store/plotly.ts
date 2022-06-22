@@ -60,21 +60,8 @@ export const usePlotlyStore = defineStore("plotly", {
 
     },
     actions: {
-        draw():void {
-            console.log(this.plotly, "plotly");
-        },
         getRandomColor(): string {
             return '#' + Math.floor(Math.random() * 16777215).toString(16);
-        },
-        // get equation info by id
-        getEquationMain(id: number) {
-            let result:any = false;
-            this.equations.forEach(item => {
-                if (item.id == id) {
-                    result = item;
-                }
-            })
-            return result;
         },
         // get equation index by id
         getEquationIndex(id: number): number {
