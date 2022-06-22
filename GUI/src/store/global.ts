@@ -10,7 +10,7 @@ export const useGlobalStore = defineStore('global', {
       responseStacks: ref<Request[]>([]),
       responseStringCache: '', // if c++ return a very long json
       apiTimeOut: 10000,
-      apiConsole: true
+      apiConsole: false
     }
   },
   getters: {
