@@ -8,17 +8,18 @@
         <p class="m-0 text-secondary">方程組</p>
         <el-button size="small" type="primary" icon="Plus" @click="addEquation" circle plain></el-button>
       </div>
-      <Equation v-for="item in equations" :data="item" @delEquation="api_delEquation"></Equation>
+      <div class="long-content">
+        <Equation v-for="item in equations" :data="item" @delEquation="api_delEquation"></Equation>
+      </div>
     </div>
     <div class="vh-45">
       <div class="fbc">
         <p class="m-0 text-secondary">變量</p>
-        <el-button size="small" type="primary" icon="Plus" @click="variableModalDisplay = true" circle plain></el-button>
+        <el-button size="small" type="primary" icon="Plus" @click="addVariable" circle plain></el-button>
       </div>
-      <Variable></Variable>
-      <el-dialog v-model="variableModalDisplay" title="Add a variable" width="40%">
-<!--    TODO: variableModal content    -->
-      </el-dialog>
+      <div class="long-content">
+        <Variable v-for="item in variables" :data="item" @editVariable="editVariable" @delVariable="api_delVariable"></Variable>
+      </div>
     </div>
   </div>
 </template>
@@ -35,14 +36,14 @@
       const globalStore = useGlobalStore();
       const plotlyStore = usePlotlyStore();
       const { process, responseStacks } = storeToRefs(useGlobalStore());
-      const { equations, variableModalDisplay } = storeToRefs(usePlotlyStore());
+      const { equations, variables } = storeToRefs(usePlotlyStore());
       return {
         globalStore,
         plotlyStore,
         process,
         responseStacks,
         equations,
-        variableModalDisplay
+        variables
       }
     },
     components: {
@@ -66,7 +67,8 @@
               instance.confirmButtonLoading = true;
               instance.confirmButtonText = 'Loading...';
               // call c++ API
-              const token = await this.api_addEquation(instance.inputValue);
+              const newEquation = instance.inputValue.replace(/\s/ig, '');
+              const token = await this.api_addEquation(newEquation);
               let interval = setInterval(() => {
                 const response = this.globalStore.getResLogByToken(token);
                 if (response) {
@@ -144,13 +146,82 @@
           token: token,
           completed: false,
           result: null,
-          callback: () => {}
+          callback: () => {
+            this.equations = this.equations.filter(equation => {
+              return equation.id != id;
+            });
+            ElMessage.success('Delete equation success');
+          }
         });
         this.globalStore.apiSent(commend);
         return token;
       },
       async addVariable() {
-
+        ElMessageBox.prompt('enter your variable: ', 'Add Variable', {
+          confirmButtonText: 'Add',
+          cancelButtonText: 'Cancel',
+          beforeClose: async (action, instance, done) => {
+            if (action === 'confirm') {
+              if (! instance.inputValue) {
+                ElMessage({
+                  type: 'error',
+                  message: 'field should have text'
+                })
+                return;
+              }
+              instance.confirmButtonLoading = true;
+              instance.confirmButtonText = 'Loading...';
+              // call c++ API
+              const newEquation = instance.inputValue.replace(/\s/ig, '');
+              const token = await this.api_addVariable(newEquation);
+              let interval = setInterval(() => {
+                const response = this.globalStore.getResLogByToken(token);
+                if (response) {
+                  if (response.completed) {
+                    // has completed
+                    clearInterval(interval);
+                    setTimeout(() => {
+                      instance.confirmButtonLoading = false
+                      instance.confirmButtonText = 'Add'
+                    }, 300);
+                    const data = response.result;
+                    if (data.isError) {
+                      ElMessage({
+                        type: 'error',
+                        message: data.errorMessage
+                      })
+                    }
+                    else {
+                      this.variables.push({
+                        id: data.id,
+                        name: data.equation.split("=")[0],
+                        content: data.equation,
+                        srcContent: newEquation,
+                        tokenList: [token]
+                      });
+                      done();
+                    }
+                  }
+                }
+              },1000)
+            } else {
+              done()
+            }
+          },
+        }).then((action) => {
+          // action
+          if (action === 'confirm') {
+            ElMessage({
+              type: 'success',
+              message: 'Add Success',
+            })
+          }
+        }).catch(() => {
+          ElMessage({
+            type: 'info',
+            message: 'Input canceled',
+          })
+        })
       },
       async api_addVariable(equation) {
         await this.globalStore.waitAllReqCompleted();
@@ -158,6 +229,90 @@
         const commend = `addVar ${token} ${equation}`;
         this.responseStacks.push({
           method: "addEquation",
+          commend: commend,
+          token: token,
+          completed: false,
+          result: null,
+          callback: () => {}
+        });
+        this.globalStore.apiSent(commend);
+        return token;
+      },
+      async editVariable(data) {
+        ElMessageBox.prompt('enter your Variable: ', 'Modify Variable', {
+          confirmButtonText: 'Modify',
+          cancelButtonText: 'Cancel',
+          inputValue: data.srcContent,
+          beforeClose: async (action, instance, done) => {
+            if (action === 'confirm') {
+              if (! instance.inputValue) {
+                ElMessage({
+                  type: 'error',
+                  message: 'field should have text'
+                })
+                return;
+              }
+              instance.confirmButtonLoading = true;
+              instance.confirmButtonText = 'Loading...';
+              // call c++ API
+              const newEquation = instance.inputValue.replace(/\s/ig, '');
+              const token = await this.api_editVariable(data, newEquation);
+              let interval = setInterval(() => {
+                const response = this.globalStore.getResLogByToken(token);
+                if (response) {
+                  if (response.completed) {
+                    // has completed
+                    clearInterval(interval);
+                    setTimeout(() => {
+                      instance.confirmButtonLoading = false
+                      instance.confirmButtonText = 'Modify'
+                    }, 300);
+                    const data = response.result;
+                    if (data.isError) {
+                      ElMessage({
+                        type: 'error',
+                        message: data.errorMessage
+                      })
+                    }
+                    else {
+                      ElMessage({
+                        type: 'success',
+                        message: 'Modify variable success'
+                      })
+                      data.name = data.equation.split("=")[0];
+                      data.tokenList.push(data.hash);
+                      data.srcContent = instance.inputValue;
+                      data.content = newEquation;
+                      done();
+                    }
+                  }
+                }
+              },1000)
+            } else {
+              done()
+            }
+          },
+        }).then((action) => {
+          // action
+          if (action === 'confirm') {
+            ElMessage({
+              type: 'success',
+              message: 'Modify Success',
+            })
+          }
+        }).catch(() => {
+          ElMessage({
+            type: 'info',
+            message: 'Input canceled',
+          })
+        })
+      },
+      async api_editVariable(data, newContent) {
+        await this.globalStore.waitAllReqCompleted();
+        const token = this.globalStore.getToken();
+        const commend = `editVar ${token} ${data.id} ${newContent}`;
+        this.responseStacks.push({
+          method: "editVariable",
           commend: commend,
           token: token,
           completed: false,
@@ -177,7 +332,16 @@
           token: token,
           completed: false,
           result: null,
-          callback: () => {}
+          callback: (result) => {
+            if (result.isError) {
+              ElMessage.error(result.errorMessage);
+            }else {
+              this.variables = this.variables.filter(variable => {
+                return variable.id != id;
+              });
+              ElMessage.success('Delete variable success');
+            }
+          }
         });
         this.globalStore.apiSent(commend);
         return token;
@@ -187,18 +351,25 @@
 </script>
 
 <style scoped>
-#menu {
-  height: 100vh;
-  padding: 15px 30px 30px 15px;
-  background-color: rgb(251, 251, 251);
-}
-#menu:after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -15px;
-  height: 100vh;
-  width: 15px;
-  background-color: rgb(251, 251, 251);
-}
+  #menu {
+    height: 100vh;
+    padding: 15px 30px 30px 15px;
+    background-color: rgb(251, 251, 251);
+  }
+  #menu:after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -15px;
+    height: 100vh;
+    width: 15px;
+    background-color: rgb(251, 251, 251);
+  }
+  .long-content {
+    height: calc(100% - 30px) !important;
+    overflow-y: auto!important;
+    padding: 0 15px;
+    margin-left: -15px;
+    width: calc(100% + 30px);
+  }
 </style>

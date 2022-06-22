@@ -57,7 +57,6 @@ export default {
   },
   methods: {
     receiveData(response) {
-      console.log(response);
       try {
         const data = JSON.parse(this.responseStringCache + response);
         let thisResponseIndex = this.responseStacks.map(e => e.token).indexOf(data.hash);

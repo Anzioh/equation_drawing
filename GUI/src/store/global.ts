@@ -67,14 +67,14 @@ export const useGlobalStore = defineStore('global', {
       })
     },
     // get token
-    getToken(): string {
+    getToken: function(): string {
       let random = [...Array(8).keys()].map(e => String.fromCharCode(Math.floor((Math.random() * (126 - 47)) + 48))).join("");
       let cacheToken = Date.now().toString(16) + random + "";
       let token = cacheToken.split('').sort((a, b) => Math.floor(Math.random() - 0.5)).join("");
       return token;
     },
     // get response log by token
-    getResLogByToken(token: string) {
+    getResLogByToken: function(token: string): any {
       let result:any = false;
       this.responseStacks.forEach(response => {
         if (response.token == token) {
@@ -84,7 +84,7 @@ export const useGlobalStore = defineStore('global', {
       return result;
     },
     // write by stdin
-    apiSent: function (commend: string) {
+    apiSent: function (commend: string): void {
       const api:any = toRaw(this.process);
       api.stdin.write(commend + '\n');
     }

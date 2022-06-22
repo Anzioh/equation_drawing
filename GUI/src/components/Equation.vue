@@ -1,6 +1,6 @@
 <template>
   <div class="pretty-card">
-    <el-color-picker v-model="data.color" show-alpha />
+    <el-color-picker v-model="data.color" :clearable="false" />
     <div class="content">
       <p>{{ data.srcEquation }}</p>
     </div>
@@ -55,7 +55,7 @@
               instance.confirmButtonLoading = true;
               instance.confirmButtonText = 'Loading...';
               // call c++ API
-              const newEquation = instance.inputValue;
+              const newEquation = instance.inputValue.replace(/\s/ig, '');
               const token = await this.api_editEquation(newEquation);
               let interval = setInterval(() => {
                 const response = this.globalStore.getResLogByToken(token);
@@ -76,8 +76,12 @@
                     }
                     else {
                       this.data.tokenList.push(data.hash);
-                      this.data.srcEquation = newEquation;
+                      this.data.srcEquation = instance.inputValue;
                       this.data.equation = data.equation;
+                      ElMessage({
+                        type: 'success',
+                        message: 'Modify equation success'
+                      })
                       done();
                     }
                   }
