@@ -37,14 +37,13 @@ export default {
     Plotly,
   },
   beforeMount() {
-    console.log(window.navigator.platform); 
-    console.log(`./src/assets/binary/${this.globalStore.isMac ? 'macOS' : 'Windows'}/equation_drawing${this.globalStore.isMac ? '' : '.exe'}`);
-    this.globalStore.process = execFile(`./src/assets/binary/${this.globalStore.isMac ? 'macOS' : 'Windows'}/equation_drawing${this.globalStore.isMac ? '' : '.exe'}`);
-  },
-  mounted() {
+    this.globalStore.process = exec(`ls && ./src/assets/binary/${this.globalStore.isMac ? 'macOS' : 'Windows'}/equation_drawing${this.globalStore.isMac ? '' : '.exe'}`);
     this.globalStore.process.stdout.on("data", (response) => {
+      console.log(response);
       this.receiveData(response);
     })
+  },
+  mounted() {
     this.globalStore.process.on('close', (code) => {
       console.log(`child process close all stdio with code ${code}`);
     });

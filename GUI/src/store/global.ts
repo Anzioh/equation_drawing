@@ -23,8 +23,6 @@ export const useGlobalStore = defineStore('global', {
     isMac: (): boolean => {
       const os: string = window.navigator.platform;
       const result: boolean = os.match(/Mac/gi) !== null;
-      console.log(result);
-      
       return result;
     }
   },
