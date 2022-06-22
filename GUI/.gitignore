@@ -2,6 +2,8 @@
 node_modules
 /dist
 
+!node_modules/binary-api/binary-api
+!node_modules/.bin/binary-api
 
 # local env files
 .env.local
