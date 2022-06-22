@@ -58,11 +58,9 @@ export default {
           })
         }
       })
-      if (data.length > 0) {
-        this.plotlyLayout.xaxis.range = [this.plotlyRange.x.start, this.plotlyRange.x.end];
-        this.plotlyLayout.yaxis.range = [this.plotlyRange.y.start, this.plotlyRange.y.end];
-        Plotly.react(this.$el, data, this.plotlyLayout, this.plotlyOption);
-      }
+      this.plotlyLayout.xaxis.range = [this.plotlyRange.x.start, this.plotlyRange.x.end];
+      this.plotlyLayout.yaxis.range = [this.plotlyRange.y.start, this.plotlyRange.y.end];
+      Plotly.react(this.$el, data, this.plotlyLayout, this.plotlyOption);
     }
   },
   watch: {

@@ -76,7 +76,7 @@
               // call c++ API
               const newEquation = instance.inputValue.replace(/\s/ig, '');
               const token = await this.api_addEquation(newEquation);
-              let interval = setInterval(() => {
+              let interval = await setInterval(async () => {
                 const response = this.globalStore.getResLogByToken(token);
                 if (response) {
                   if (response.completed) {
@@ -103,7 +103,7 @@
                         y: [],
                         tokenList: [token]
                       });
-                      this.api_getLine(data.id);
+                      await this.api_getLine(data.id);
                       done();
                     }
                   }
@@ -182,7 +182,7 @@
               // call c++ API
               const newEquation = instance.inputValue.replace(/\s/ig, '');
               const token = await this.api_addVariable(newEquation);
-              let interval = setInterval(() => {
+              let interval = await setInterval(async () => {
                 const response = this.globalStore.getResLogByToken(token);
                 if (response) {
                   if (response.completed) {
@@ -207,7 +207,7 @@
                         srcContent: newEquation,
                         tokenList: [token]
                       });
-                      this.api_getAllLine();
+                      await this.api_getAllLine();
                       done();
                     }
                   }
@@ -266,7 +266,7 @@
               // call c++ API
               const newEquation = instance.inputValue.replace(/\s/ig, '');
               const token = await this.api_editVariable(data, newEquation);
-              let interval = setInterval(() => {
+              let interval = await setInterval(async () => {
                 const response = this.globalStore.getResLogByToken(token);
                 if (response) {
                   if (response.completed) {
@@ -276,11 +276,11 @@
                       instance.confirmButtonLoading = false
                       instance.confirmButtonText = 'Modify'
                     }, 300);
-                    const data = response.result;
-                    if (data.isError) {
+                    const resData = response.result;
+                    if (resData.isError) {
                       ElMessage({
                         type: 'error',
-                        message: data.errorMessage
+                        message: resData.errorMessage
                       })
                     }
                     else {
@@ -288,11 +288,11 @@
                         type: 'success',
                         message: 'Modify variable success'
                       })
-                      data.name = data.equation.split("=")[0];
-                      data.tokenList.push(data.hash);
+                      data.name = resData.equation.split("=")[0];
+                      data.tokenList.push(resData.hash);
                       data.srcContent = instance.inputValue;
                       data.content = newEquation;
-                      this.api_getAllLine();
+                      await this.api_getAllLine();
                       done();
                     }
                   }
@@ -359,7 +359,7 @@
       async api_getLine(id) {
         await this.globalStore.waitAllReqCompleted();
         const token = this.globalStore.getToken();
-        const rangeStr = `${this.plotlyRange.x.start.toFixed(6)} ${this.plotlyRange.x.end.toFixed(6)} ${this.plotlyRange.y.start.toFixed(6)} ${this.plotlyRange.y.end.toFixed(6)}`;
+        const rangeStr = `${this.plotlyRange.x.start.toFixed(10)} ${this.plotlyRange.x.end.toFixed(10)} ${this.plotlyRange.y.start.toFixed(10)} ${this.plotlyRange.y.end.toFixed(10)}`;
         const commend = `getLine ${token} ${id} ${this.dpi} ${rangeStr}`;
         this.responseStacks.push({
           method: "getLine",
@@ -385,7 +385,7 @@
         }
         await this.globalStore.waitAllReqCompleted();
         const token = this.globalStore.getToken();
-        const rangeStr = `${this.plotlyRange.x.start.toFixed(6)} ${this.plotlyRange.x.end.toFixed(6)} ${this.plotlyRange.y.start.toFixed(6)} ${this.plotlyRange.y.end.toFixed(6)}`;
+        const rangeStr = `${this.plotlyRange.x.start.toFixed(10)} ${this.plotlyRange.x.end.toFixed(10)} ${this.plotlyRange.y.start.toFixed(10)} ${this.plotlyRange.y.end.toFixed(10)}`;
         const commend = `getAllLine ${token} ${this.dpi} ${rangeStr}`;
         this.responseStacks.push({
           method: "getAllLine",
@@ -410,8 +410,8 @@
     },
     watch: {
       plotlyRange: {
-        handler() {
-          this.api_getAllLine();
+        async handler() {
+          await this.api_getAllLine();
         },
         deep: true
       }

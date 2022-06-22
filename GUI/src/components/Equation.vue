@@ -56,7 +56,7 @@
               // call c++ API
               const newEquation = instance.inputValue.replace(/\s/ig, '');
               const token = await this.api_editEquation(newEquation);
-              let interval = setInterval(() => {
+              let interval = await setInterval(async () => {
                 const response = this.globalStore.getResLogByToken(token);
                 if (response) {
                   if (response.completed) {
@@ -81,7 +81,7 @@
                         type: 'success',
                         message: 'Modify equation success'
                       })
-                      this.$emit('api_getLine', data.id);
+                      await this.$emit('api_getLine', data.id);
                       done();
                     }
                   }

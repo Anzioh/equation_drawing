@@ -21,6 +21,7 @@
     "crypto-browserify": "^3.12.0",
     "electron-icon-builder": "^2.0.1",
     "element-plus": "^2.2.6",
+    "es5-ext": "^0.10.61",
     "jquery": "^3.6.0",
     "os-browserify": "^0.3.0",
     "pinia": "^2.0.14",

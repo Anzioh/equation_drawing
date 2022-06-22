@@ -20,10 +20,10 @@ async function createWindow() {
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
-      webSecurity: false,
-      preload: path.join(__dirname, 'preload.js')
+      webSecurity: false
     },
   })
+  console.log('\n\n\n' + path.join(__dirname, 'preload.js') + '\n\n\n\n');
 
   if (process.env.WEBPACK_DEV_SERVER_URL) {
     // Load the url of the dev server if in development mode
