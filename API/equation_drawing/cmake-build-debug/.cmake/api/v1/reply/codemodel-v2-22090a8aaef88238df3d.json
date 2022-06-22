@@ -6,10 +6,9 @@
 			[
 				{
 					"build" : ".",
-					"jsonFile" : "directory-.-Debug-f5ebdc15457944623624.json",
 					"minimumCMakeVersion" : 
 					{
-						"string" : "3.22"
+						"string" : "3.20"
 					},
 					"projectIndex" : 0,
 					"source" : ".",
@@ -39,7 +38,7 @@
 				{
 					"directoryIndex" : 0,
 					"id" : "equation_drawing::@6890427a1f51a3e7e1df",
-					"jsonFile" : "target-equation_drawing-Debug-b6f9b6d5866ad904fa20.json",
+					"jsonFile" : "target-equation_drawing-Debug-671c2000f4c472c5abf2.json",
 					"name" : "equation_drawing",
 					"projectIndex" : 0
 				}
@@ -55,6 +54,6 @@
 	"version" : 
 	{
 		"major" : 2,
-		"minor" : 3
+		"minor" : 2
 	}
 }
