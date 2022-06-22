@@ -13,10 +13,8 @@ add_executable(equation_drawing
         Equation.cpp
         Equation.h
         main.cpp
-        Varible.cpp
-        Varible.h
         Viewer.cpp
         Viewer.h
-	Variable.cpp
-	Variable.h
-	atmsp.h)
+		Variable.cpp
+		Variable.h
+		atmsp.h)

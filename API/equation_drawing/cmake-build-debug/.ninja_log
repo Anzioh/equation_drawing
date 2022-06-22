@@ -1,9 +1,14 @@
 # ninja log v5
-1768	2142	1655797335072700646	equation_drawing	72c8c88a5adb356b
+0	220	1655894833506537980	build.ninja	8d2097084f8eeb73
 5	2318	1655824904382127487	CMakeFiles/equation_drawing.dir/main.cpp.o	7bf1262ebe4cb56d
-4	2516	1655824904579204621	CMakeFiles/equation_drawing.dir/Caculater.cpp.o	d76c1744ac4386d7
-6	2817	1655824904860172947	CMakeFiles/equation_drawing.dir/Viewer.cpp.o	b1fa8eeab0dc5c18
 5	1703	1655824903710054536	CMakeFiles/equation_drawing.dir/Equation.cpp.o	2619abd2cdb86189
-0	220	1655825322331080568	build.ninja	8d2097084f8eeb73
 3	955	1655825323300713109	CMakeFiles/equation_drawing.dir/Varible.cpp.o	302358c8b6b0782a
+6	2817	1655824904860172947	CMakeFiles/equation_drawing.dir/Viewer.cpp.o	b1fa8eeab0dc5c18
+4	2516	1655824904579204621	CMakeFiles/equation_drawing.dir/Caculater.cpp.o	d76c1744ac4386d7
 955	1101	1655825323441314073	equation_drawing	489409ea53434874
+0	116	1655894833506537980	build.ninja	8d2097084f8eeb73
+220	7880	1655894841414721431	CMakeFiles/equation_drawing.dir/Variable.cpp.o	fd6fd4f9b227885c
+220	8854	1655894842254803889	CMakeFiles/equation_drawing.dir/main.cpp.o	7bf1262ebe4cb56d
+220	8996	1655894842525949133	CMakeFiles/equation_drawing.dir/Caculater.cpp.o	d76c1744ac4386d7
+220	9251	1655894842750281739	CMakeFiles/equation_drawing.dir/Viewer.cpp.o	b1fa8eeab0dc5c18
+9251	9652	1655894843186545591	equation_drawing	2d880e25f8c90556

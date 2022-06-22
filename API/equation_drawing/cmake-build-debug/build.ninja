@@ -70,15 +70,15 @@ build CMakeFiles/equation_drawing.dir/main.cpp.o: CXX_COMPILER__equation_drawing
   OBJECT_DIR = CMakeFiles/equation_drawing.dir
   OBJECT_FILE_DIR = CMakeFiles/equation_drawing.dir
 
-build CMakeFiles/equation_drawing.dir/Varible.cpp.o: CXX_COMPILER__equation_drawing_Debug /Applications/XAMPP/xamppfiles/htdocs/equation_drawing/API/equation_drawing/Varible.cpp || cmake_object_order_depends_target_equation_drawing
-  DEP_FILE = CMakeFiles/equation_drawing.dir/Varible.cpp.o.d
+build CMakeFiles/equation_drawing.dir/Viewer.cpp.o: CXX_COMPILER__equation_drawing_Debug /Applications/XAMPP/xamppfiles/htdocs/equation_drawing/API/equation_drawing/Viewer.cpp || cmake_object_order_depends_target_equation_drawing
+  DEP_FILE = CMakeFiles/equation_drawing.dir/Viewer.cpp.o.d
   FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -std=gnu++14
   INCLUDES = -I/Applications/XAMPP/xamppfiles/htdocs/equation_drawing/API/equation_drawing/. -I/Applications/XAMPP/xamppfiles/htdocs/equation_drawing/API/equation_drawing/nlohmann
   OBJECT_DIR = CMakeFiles/equation_drawing.dir
   OBJECT_FILE_DIR = CMakeFiles/equation_drawing.dir
 
-build CMakeFiles/equation_drawing.dir/Viewer.cpp.o: CXX_COMPILER__equation_drawing_Debug /Applications/XAMPP/xamppfiles/htdocs/equation_drawing/API/equation_drawing/Viewer.cpp || cmake_object_order_depends_target_equation_drawing
-  DEP_FILE = CMakeFiles/equation_drawing.dir/Viewer.cpp.o.d
+build CMakeFiles/equation_drawing.dir/Variable.cpp.o: CXX_COMPILER__equation_drawing_Debug /Applications/XAMPP/xamppfiles/htdocs/equation_drawing/API/equation_drawing/Variable.cpp || cmake_object_order_depends_target_equation_drawing
+  DEP_FILE = CMakeFiles/equation_drawing.dir/Variable.cpp.o.d
   FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk -std=gnu++14
   INCLUDES = -I/Applications/XAMPP/xamppfiles/htdocs/equation_drawing/API/equation_drawing/. -I/Applications/XAMPP/xamppfiles/htdocs/equation_drawing/API/equation_drawing/nlohmann
   OBJECT_DIR = CMakeFiles/equation_drawing.dir
@@ -92,7 +92,7 @@ build CMakeFiles/equation_drawing.dir/Viewer.cpp.o: CXX_COMPILER__equation_drawi
 #############################################
 # Link the executable equation_drawing
 
-build equation_drawing: CXX_EXECUTABLE_LINKER__equation_drawing_Debug CMakeFiles/equation_drawing.dir/Caculater.cpp.o CMakeFiles/equation_drawing.dir/Equation.cpp.o CMakeFiles/equation_drawing.dir/main.cpp.o CMakeFiles/equation_drawing.dir/Varible.cpp.o CMakeFiles/equation_drawing.dir/Viewer.cpp.o
+build equation_drawing: CXX_EXECUTABLE_LINKER__equation_drawing_Debug CMakeFiles/equation_drawing.dir/Caculater.cpp.o CMakeFiles/equation_drawing.dir/Equation.cpp.o CMakeFiles/equation_drawing.dir/main.cpp.o CMakeFiles/equation_drawing.dir/Viewer.cpp.o CMakeFiles/equation_drawing.dir/Variable.cpp.o
   FLAGS = -g -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk
   OBJECT_DIR = CMakeFiles/equation_drawing.dir
   POST_BUILD = :
