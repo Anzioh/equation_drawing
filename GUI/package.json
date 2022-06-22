@@ -19,6 +19,7 @@
     "child_process": "^1.0.2",
     "core-js": "^3.8.3",
     "crypto-browserify": "^3.12.0",
+    "electron-icon-builder": "^2.0.1",
     "element-plus": "^2.2.6",
     "jquery": "^3.6.0",
     "os-browserify": "^0.3.0",

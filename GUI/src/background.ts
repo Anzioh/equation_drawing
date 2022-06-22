@@ -4,6 +4,7 @@ import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
 import path from 'path'
 
+declare const __static: string;
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -15,6 +16,7 @@ async function createWindow() {
   const win = new BrowserWindow({
     width: 1280,
     height: 900,
+    icon: path.join(__static, 'icon.icns'),
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
