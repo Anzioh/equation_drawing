@@ -98,10 +98,25 @@ export const useGlobalStore = defineStore('global', {
     // write by stdin
     apiSent: function (commend: string): void {
       const api:any = toRaw(this.process);
-      api.stdin.write(commend + '\n');
-      if (this.apiConsole) {
-        console.log(commend);
-      }
+      const retryLimit:number = toRaw(this.apiTimeOut) / 50;
+      let tryTimes = 0;
+      const interval = setInterval(e => {
+        const apiNowState: any = toRaw(this.process);
+        console.log(apiNowState.stdin.writable);
+        if (apiNowState.stdin.writable) {
+          api.stdin.write(commend + '\n');
+          if (this.apiConsole) {
+            console.log(api);
+            console.log(commend);
+          }
+          clearInterval(interval);
+        }
+        if (tryTimes >= retryLimit) {
+          clearInterval(interval);
+        }
+        tryTimes ++;
+      }, 50);
+
     }
   },
 })

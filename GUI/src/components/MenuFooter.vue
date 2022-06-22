@@ -1,14 +1,21 @@
 <template>
   <div class="fsc">
-    <p>Force Refresh</p>
-    <p>Dev Team</p>
-    <p>Source Code</p>
+    <p @click="mess(`Haven't development`)">Force Refresh</p>
+    <p @click="mess(`Haven't development`)">Dev Team</p>
+    <p @click="mess(`Haven't development`)">Source Code</p>
   </div>
 </template>
 
 <script>
+import {ElMessage} from "element-plus";
+
 export default {
-name: "MenuFooter"
+  name: "MenuFooter",
+  methods: {
+    mess(text) {
+      ElMessage.warning(text);
+    }
+  }
 }
 </script>
 

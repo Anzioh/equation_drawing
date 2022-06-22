@@ -6,6 +6,10 @@
 
 #IncludeRegexTransform: 
 
+/Applications/XAMPP/xamppfiles/htdocs/equation_drawing/API/equation_drawing/Caculater.cpp
+Caculater.h
+/Applications/XAMPP/xamppfiles/htdocs/equation_drawing/API/equation_drawing/Caculater.h
+
 /Applications/XAMPP/xamppfiles/htdocs/equation_drawing/API/equation_drawing/Caculater.h
 map
 -
