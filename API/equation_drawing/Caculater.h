@@ -18,6 +18,15 @@ public:
 	Viewer viewer;
 	vector<Variable> vars;
 	int idCounter = 1;
+	double nanind;
+
+	Caculater() {
+		ATMSP<double> parser;
+		ATMSB<double> byteCode;
+		byteCode.var[0] = 5;
+		parser.parse(byteCode, "sin(x)^cos(x)", "x");
+		this->nanind = byteCode.run();
+	}
 
 	string addEquation(string hash, string equation);
 	string editEquation(string hash, int id, string equation);
