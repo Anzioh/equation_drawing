@@ -129,9 +129,9 @@ p {
   height: 60px;
   border-radius: 15px;
   box-shadow: 0 .5rem 1rem rgba(0,0,0,.15)!important;
+  overflow: hidden;
   margin: 15px 0;
   padding: 7.5px;
-  overflow: hidden;
   display: flex;
   justify-content: space-between;
 }
@@ -230,4 +230,7 @@ p {
   align-items: center;
   display: flex;
   margin-top: -5px;
+}
+button.el-button.el-button--small.is-text.el-color-dropdown__link-btn {
+  display: none;
 }
