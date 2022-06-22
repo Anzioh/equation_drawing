@@ -42,9 +42,7 @@ export default {
       filePath = (require('app-root-dir').get()) + '/node_modules/binary-api/binary-api';
     }
     this.globalStore.process = exec(filePath);
-    console.log(filePath);
     this.globalStore.process.stdout.on("data", (response) => {
-      console.log(response);
       this.receiveData(response);
     })
   },

@@ -100,7 +100,6 @@ export const useGlobalStore = defineStore('global', {
       let tryTimes = 0;
       const interval = setInterval(e => {
         const apiNowState: any = toRaw(this.process);
-        console.log(apiNowState.stdin.writable);
         if (apiNowState.stdin.writable) {
           api.stdin.write(commend + '\n');
           if (this.apiConsole) {
