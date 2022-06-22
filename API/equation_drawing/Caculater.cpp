@@ -170,13 +170,7 @@ string Caculater::getLine(string hash, int id, int dpi, double xMin, double xMax
 			byteCode.var[xyIndex] = xV;
 			parser.parse(byteCode, equ.rhs, varStr);
 			x.push_back(xV);
-			double  res = byteCode.run();
-			if (res > yMax || res < yMin) {
-				y.push_back(nanind);
-			}
-			else {
-				y.push_back(res);
-			}
+			y.push_back(byteCode.run());
 		}
 	}
 	else if (equ.lhs == "x") {
@@ -184,13 +178,7 @@ string Caculater::getLine(string hash, int id, int dpi, double xMin, double xMax
 		for (int i = 0; i < dpi; i++, yV += yT) {
 			byteCode.var[xyIndex] = yV;
 			parser.parse(byteCode, equ.rhs, varStr);
-			double  res = byteCode.run();
-			if (res > xMax || res < xMin) {
-				x.push_back(nanind);
-			}
-			else {
-				x.push_back(res);
-			}
+			x.push_back(byteCode.run());
 			y.push_back(yV);
 		}
 	}
@@ -237,13 +225,7 @@ string Caculater::getAllLine(string hash, int dpi, double xMin, double xMax, dou
 				byteCode.var[xyIndex] = xV;
 				parser.parse(byteCode, this->equations[i].rhs, varStr);
 				x[i].push_back(xV);
-				double  res = byteCode.run();
-				if (res > yMax || res < yMin) {
-					y[i].push_back(nanind);
-				}
-				else {
-					y[i].push_back(res);
-				}
+				y[i].push_back(byteCode.run());
 			}
 		}
 		else if (this->equations[i].lhs == "x") {
@@ -251,13 +233,7 @@ string Caculater::getAllLine(string hash, int dpi, double xMin, double xMax, dou
 			for (int j = 0; j < dpi; j++, yV += yT) {
 				byteCode.var[xyIndex] = yV;
 				parser.parse(byteCode, this->equations[i].rhs, varStr);
-				double  res = byteCode.run();
-				if (res > xMax || res < xMin) {
-					x[i].push_back(nanind);
-				}
-				else {
-					x[i].push_back(res);
-				}
+				x[i].push_back(byteCode.run());
 				y[i].push_back(yV);
 			}
 		}
