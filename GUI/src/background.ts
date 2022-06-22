@@ -11,8 +11,11 @@ protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { secure: false, standard: false } },
 ])
 
+app.setName("bla plotter");
+
 async function createWindow() {
   // Create the browser window.
+  // console.log(app.getPath(''))
   const win = new BrowserWindow({
     width: 1280,
     height: 900,

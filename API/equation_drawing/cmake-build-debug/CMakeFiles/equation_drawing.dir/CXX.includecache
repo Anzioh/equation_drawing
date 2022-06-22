@@ -58,14 +58,6 @@ cstdlib
 cmath
 -
 
-/Applications/XAMPP/xamppfiles/htdocs/equation_drawing/API/equation_drawing/main.cpp
-iostream
--
-string
--
-Caculater.h
-/Applications/XAMPP/xamppfiles/htdocs/equation_drawing/API/equation_drawing/Caculater.h
-
 /Applications/XAMPP/xamppfiles/htdocs/equation_drawing/API/equation_drawing/nlohmann/json.hpp
 algorithm
 -

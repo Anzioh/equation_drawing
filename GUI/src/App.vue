@@ -37,7 +37,12 @@ export default {
     Plotly,
   },
   beforeMount() {
-    this.globalStore.process = exec(`ls && ./src/assets/binary/${this.globalStore.isMac ? 'macOS' : 'Windows'}/equation_drawing${this.globalStore.isMac ? '' : '.exe'}`);
+    let filePath = `./src/assets/binary/Windows/equation_drawing.exe`;
+    if (this.globalStore.isMac) {
+      filePath = (require('app-root-dir').get()) + '/node_modules/binary-api/binary-api';
+    }
+    this.globalStore.process = exec(filePath);
+    console.log(filePath);
     this.globalStore.process.stdout.on("data", (response) => {
       console.log(response);
       this.receiveData(response);
