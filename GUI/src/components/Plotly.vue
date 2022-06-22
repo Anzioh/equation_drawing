@@ -2,14 +2,14 @@
   <div id="plotly"></div>
 </template>
 <script>
-import { ref, watch } from 'vue'
+import {ref, toRaw} from 'vue'
 import { storeToRefs } from 'pinia'
 import { usePlotlyStore } from "@/store/plotly"
 import Plotly from 'plotly.js'
 
 export default {
   setup() {
-    const { plotly, plotlyDOM, plotlyData, plotlyLayout, plotlyOption } = storeToRefs(usePlotlyStore());
+    const { plotly, plotlyDOM, plotlyData, plotlyLayout, plotlyOption, plotlyRange, equations } = storeToRefs(usePlotlyStore());
     const plotlyStore = ref(usePlotlyStore());
     return {
       plotly,
@@ -17,50 +17,61 @@ export default {
       plotlyStore,
       plotlyData,
       plotlyLayout,
-      plotlyOption
+      plotlyOption,
+      plotlyRange,
+      equations
     }
   },
   components: {
   },
   mounted() {
     this.plotlyDOM = this.$el;
-    // fake data
-    const 解析度 = 10000;
-    const 軸範圍 = {
-      x: {
-        start: -5,
-        end: 5
-      },
-      y: {
-        start: -5,
-        end: 5
-      }
-    }
-    // if function is f(x) = y = x^2
-    const 起點 = 軸範圍.x.start; // if function
-    const 終點 = 軸範圍.x.end;
-    let allPoints = [];
-    for (let index = 起點; index <= 終點; index += (終點 -  起點) / 解析度) {
-      // 解析所有的x, y points
-      const y = Math.sin(index);
-      const x = index;
-      allPoints.push({
-        x: x,
-        y: y
-      })
-    }
-    this.plotly = Plotly.newPlot(this.plotlyDOM, [{
-      name: 'y=x^2',
-      type: 'scatter',
-      x: allPoints.map(e => e.x),
-      y: allPoints.map(e => e.y)
-    }], this.plotlyLayout, this.plotlyOption)
-    this.plotlyDOM.on("plotly_relayout", function(e) {
-      console.log("plotly_relayout", e);
+    Plotly.newPlot(this.plotlyDOM, [], this.plotlyLayout, this.plotlyOption);
+
+    // on plotly resize;
+    this.plotlyDOM.on("plotly_relayout", (e) => {
+      this.plotlyRange.x.start = e['xaxis.range[0]'];
+      this.plotlyRange.x.end = e['xaxis.range[1]'];
+      this.plotlyRange.y.start = e['yaxis.range[0]'];
+      this.plotlyRange.y.end = e['yaxis.range[1]'];
     })
   },
+  methods: {
+    update() {
+      let data = [];
+      toRaw(this.equations).forEach(equation => {
+        if (!(equation.x.length <= 0 || equation.y.length <= 0)) {
+          data.push({
+            name: equation.srcEquation,
+            type: 'scatter',
+            x: equation.x,
+            y: equation.y,
+            mode: 'lines',
+            connectgaps: false,
+            marker: {
+              color: equation.color,
+            },
+            line: {
+              color: equation.color,
+              width: 4
+            }
+          })
+        }
+      })
+      if (data.length > 0) {
+        this.plotlyLayout.xaxis.range = [this.plotlyRange.x.start, this.plotlyRange.x.end];
+        this.plotlyLayout.yaxis.range = [this.plotlyRange.y.start, this.plotlyRange.y.end];
+        Plotly.react(this.$el, data, this.plotlyLayout, this.plotlyOption);
+      }
+    }
+  },
   watch: {
-
+    equations: {
+      handler() {
+        this.update();
+      },
+      deep: true
+    }
   }
 }
 </script>

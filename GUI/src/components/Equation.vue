@@ -11,7 +11,6 @@
           <el-button icon="Close" plain size="small" circle />
         </template>
       </el-popconfirm>
-
     </div>
   </div>
 </template>
@@ -82,6 +81,7 @@
                         type: 'success',
                         message: 'Modify equation success'
                       })
+                      this.$emit('api_getLine', data.id);
                       done();
                     }
                   }

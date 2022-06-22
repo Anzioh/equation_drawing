@@ -98,8 +98,14 @@ p {
   transition: opacity 0.25s ease;
   opacity: 0;
 }
+.vh-5 {
+  height: 5vh!important;
+}
 .vh-10 {
   height: 10vh !important;
+}
+.vh-40 {
+  height: 40vh!important;
 }
 .vh-45 {
   height: 45vh !important;
@@ -110,7 +116,6 @@ p {
 .op-0 {
   opacity: 0 !important;
 }
-
 .w-33 {
   width: 33.33333333% !important;
 }

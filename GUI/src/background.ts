@@ -2,6 +2,8 @@ import { app, protocol, BrowserWindow } from 'electron'
 import { createProtocol } from 'vue-cli-plugin-electron-builder/lib'
 import installExtension, { VUEJS3_DEVTOOLS } from 'electron-devtools-installer'
 const isDevelopment = process.env.NODE_ENV !== 'production'
+import path from 'path'
+
 
 // Scheme must be registered before the app is ready
 protocol.registerSchemesAsPrivileged([
@@ -11,12 +13,13 @@ protocol.registerSchemesAsPrivileged([
 async function createWindow() {
   // Create the browser window.
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1280,
+    height: 900,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
       webSecurity: false,
+      preload: path.join(__dirname, 'preload.js')
     },
   })
 
@@ -29,6 +32,7 @@ async function createWindow() {
     // Load the index.html when not in development
     win.loadURL('app://./index.html')
   }
+  win.webContents.closeDevTools();
 }
 
 // Quit when all windows are closed.

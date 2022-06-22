@@ -9,17 +9,20 @@
         <el-button size="small" type="primary" icon="Plus" @click="addEquation" circle plain></el-button>
       </div>
       <div class="long-content">
-        <Equation v-for="item in equations" :data="item" @delEquation="api_delEquation"></Equation>
+        <Equation v-for="item in equations" :data="item" @api_getLine="api_getLine" @delEquation="api_delEquation"></Equation>
       </div>
     </div>
-    <div class="vh-45">
-      <div class="fbc">
+    <div class="vh-40">
+      <div class="fbc" style="background: rgba(251, 251, 251, .4)">
         <p class="m-0 text-secondary">變量</p>
         <el-button size="small" type="primary" icon="Plus" @click="addVariable" circle plain></el-button>
       </div>
       <div class="long-content">
         <Variable v-for="item in variables" :data="item" @editVariable="editVariable" @delVariable="api_delVariable"></Variable>
       </div>
+    </div>
+    <div class="vh-5">
+      <MenuFooter></MenuFooter>
     </div>
   </div>
 </template>
@@ -30,25 +33,29 @@
   import { usePlotlyStore } from "@/store/plotly";
   import Equation from "@/components/Equation";
   import Variable from "@/components/Variable";
-  import { ElMessage, ElMessageBox, ElNotification } from 'element-plus';
+  import MenuFooter from "@/components/MenuFooter";
+  import { ElMessage, ElMessageBox } from 'element-plus';
   export default {
     setup() {
       const globalStore = useGlobalStore();
       const plotlyStore = usePlotlyStore();
       const { process, responseStacks } = storeToRefs(useGlobalStore());
-      const { equations, variables } = storeToRefs(usePlotlyStore());
+      const { equations, variables, plotlyRange, dpi } = storeToRefs(usePlotlyStore());
       return {
         globalStore,
         plotlyStore,
         process,
         responseStacks,
         equations,
-        variables
+        variables,
+        plotlyRange,
+        dpi
       }
     },
     components: {
       Equation,
-      Variable
+      Variable,
+      MenuFooter
     },
     methods: {
       async addEquation() {
@@ -96,6 +103,7 @@
                         y: [],
                         tokenList: [token]
                       });
+                      this.api_getLine(data.id);
                       done();
                     }
                   }
@@ -199,6 +207,7 @@
                         srcContent: newEquation,
                         tokenList: [token]
                       });
+                      this.api_getAllLine();
                       done();
                     }
                   }
@@ -283,6 +292,7 @@
                       data.tokenList.push(data.hash);
                       data.srcContent = instance.inputValue;
                       data.content = newEquation;
+                      this.api_getAllLine();
                       done();
                     }
                   }
@@ -345,6 +355,65 @@
         });
         this.globalStore.apiSent(commend);
         return token;
+      },
+      async api_getLine(id) {
+        await this.globalStore.waitAllReqCompleted();
+        const token = this.globalStore.getToken();
+        const rangeStr = `${this.plotlyRange.x.start.toFixed(6)} ${this.plotlyRange.x.end.toFixed(6)} ${this.plotlyRange.y.start.toFixed(6)} ${this.plotlyRange.y.end.toFixed(6)}`;
+        const commend = `getLine ${token} ${id} ${this.dpi} ${rangeStr}`;
+        this.responseStacks.push({
+          method: "getLine",
+          commend: commend,
+          token: token,
+          completed: false,
+          result: null,
+          callback: (result) => {
+            const index = this.plotlyStore.getEquationIndex(id);
+            if (index !== -1) {
+              this.equations[index].x = result.x;
+              this.equations[index].y = result.y;
+              this.equations[index].tokenList.push(result.hash);
+            }
+          }
+        });
+        this.globalStore.apiSent(commend);
+        return token;
+      },
+      async api_getAllLine() {
+        if (this.equations.length === 0) {
+          return;
+        }
+        await this.globalStore.waitAllReqCompleted();
+        const token = this.globalStore.getToken();
+        const rangeStr = `${this.plotlyRange.x.start.toFixed(6)} ${this.plotlyRange.x.end.toFixed(6)} ${this.plotlyRange.y.start.toFixed(6)} ${this.plotlyRange.y.end.toFixed(6)}`;
+        const commend = `getAllLine ${token} ${this.dpi} ${rangeStr}`;
+        this.responseStacks.push({
+          method: "getAllLine",
+          commend: commend,
+          token: token,
+          completed: false,
+          result: null,
+          callback: (result) => {
+            result.equations.forEach(e => {
+              const index = this.plotlyStore.getEquationIndex(e.id);
+              if (index !== -1) {
+                this.equations[index].x = e.x;
+                this.equations[index].y = e.y;
+                this.equations[index].tokenList.push(result.hash);
+              }
+            })
+          }
+        });
+        this.globalStore.apiSent(commend);
+        return token;
+      }
+    },
+    watch: {
+      plotlyRange: {
+        handler() {
+          this.api_getAllLine();
+        },
+        deep: true
       }
     }
   }
@@ -366,7 +435,7 @@
     background-color: rgb(251, 251, 251);
   }
   .long-content {
-    height: calc(100% - 30px) !important;
+    height: calc(100% - 15px) !important;
     overflow-y: auto!important;
     padding: 0 15px;
     margin-left: -15px;

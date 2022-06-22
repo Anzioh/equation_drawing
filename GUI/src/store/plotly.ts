@@ -41,8 +41,19 @@ export const usePlotlyStore = defineStore("plotly", {
                 ],
                 responsive: true
             }),
+            plotlyRange: {
+                x: {
+                    start: -5,
+                    end: 5
+                },
+                y: {
+                    start: -5,
+                    end: 5
+                }
+            },
+            dpi: 800,
             equations: ref<Equation[]>([]),
-            variables: ref<Variable[]>([]),
+            variables: ref<Variable[]>([])
         }
     },
     getters: {
@@ -65,5 +76,16 @@ export const usePlotlyStore = defineStore("plotly", {
             })
             return result;
         },
+        // get equation index by id
+        getEquationIndex(id: number): number {
+            let result: number = -1;
+            this.equations.forEach((e, index) => {
+                if (e.id == id) {
+                    result = index;
+                    return index;
+                }
+            })
+            return result;
+        }
     }
 })
