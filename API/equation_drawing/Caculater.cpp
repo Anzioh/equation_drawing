@@ -134,6 +134,11 @@ string Caculater::editEquation(string hash, int id, string equation) {
 }
 
 string Caculater::getLine(string hash, int id, int dpi, double xMin, double xMax, double yMin, double yMax) {
+	ATMSP<double> p;
+	ATMSB<double> b;
+	b.var[0] = 5;
+	p.parse(b, "sin(x)^cos(x)", "x");
+	double nanind = b.run();
 	xMin -= 5;
 	xMax += 5;
 	yMin -= 5;
@@ -167,7 +172,7 @@ string Caculater::getLine(string hash, int id, int dpi, double xMin, double xMax
 			x.push_back(xV);
 			double  res = byteCode.run();
 			if (res > yMax || res < yMin) {
-				y.push_back(this->nanind);
+				y.push_back(nanind);
 			}
 			else {
 				y.push_back(res);
@@ -181,7 +186,7 @@ string Caculater::getLine(string hash, int id, int dpi, double xMin, double xMax
 			parser.parse(byteCode, equ.rhs, varStr);
 			double  res = byteCode.run();
 			if (res > xMax || res < xMin) {
-				x.push_back(this->nanind);
+				x.push_back(nanind);
 			}
 			else {
 				x.push_back(res);
@@ -193,6 +198,11 @@ string Caculater::getLine(string hash, int id, int dpi, double xMin, double xMax
 }
 
 string Caculater::getAllLine(string hash, int dpi, double xMin, double xMax, double yMin, double yMax) {
+	ATMSP<double> p;
+	ATMSB<double> b;
+	b.var[0] = 5;
+	p.parse(b, "sin(x)^cos(x)", "x");
+	double nanind = b.run();
 	xMin -= 5;
 	xMax += 5;
 	yMin -= 5;
@@ -229,7 +239,7 @@ string Caculater::getAllLine(string hash, int dpi, double xMin, double xMax, dou
 				x[i].push_back(xV);
 				double  res = byteCode.run();
 				if (res > yMax || res < yMin) {
-					y[i].push_back(this->nanind);
+					y[i].push_back(nanind);
 				}
 				else {
 					y[i].push_back(res);
@@ -243,7 +253,7 @@ string Caculater::getAllLine(string hash, int dpi, double xMin, double xMax, dou
 				parser.parse(byteCode, this->equations[i].rhs, varStr);
 				double  res = byteCode.run();
 				if (res > xMax || res < xMin) {
-					x[i].push_back(this->nanind);
+					x[i].push_back(nanind);
 				}
 				else {
 					x[i].push_back(res);
