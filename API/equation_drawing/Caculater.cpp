@@ -134,6 +134,10 @@ string Caculater::editEquation(string hash, int id, string equation) {
 }
 
 string Caculater::getLine(string hash, int id, int dpi, double xMin, double xMax, double yMin, double yMax) {
+	xMin -= 5;
+	xMax += 5;
+	yMin -= 5;
+	yMax += 5;
 	vector<double> x;
 	vector<double> y;
 	ATMSP<double> parser;
@@ -189,6 +193,10 @@ string Caculater::getLine(string hash, int id, int dpi, double xMin, double xMax
 }
 
 string Caculater::getAllLine(string hash, int dpi, double xMin, double xMax, double yMin, double yMax) {
+	xMin -= 5;
+	xMax += 5;
+	yMin -= 5;
+	yMax += 5;
 	vector<int> id;
 	vector<vector<double>> x;
 	vector<vector<double>> y;
