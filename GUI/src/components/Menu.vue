@@ -360,6 +360,14 @@
         await this.globalStore.waitAllReqCompleted();
         const token = this.globalStore.getToken();
         const range = toRaw(this.plotlyRange);
+        if (
+          range.x.start == undefined || 
+          range.x.end == undefined || 
+          range.y.start == undefined || 
+          range.y.end == undefined
+        ) {
+          return;
+        }
         const rangeStr = `${range.x.start.toFixed(10)} ${range.x.end.toFixed(10)} ${range.y.start.toFixed(10)} ${range.y.end.toFixed(10)}`;
         const commend = `getLine ${token} ${id} ${this.dpi} ${rangeStr}`;
         this.responseStacks.push({
@@ -387,7 +395,14 @@
         await this.globalStore.waitAllReqCompleted();
         const token = this.globalStore.getToken();
         const range = toRaw(this.plotlyRange);
-        console.log(range);
+        if (
+          range.x.start == undefined || 
+          range.x.end == undefined || 
+          range.y.start == undefined || 
+          range.y.end == undefined
+        ) {
+          return;
+        }
         const rangeStr = `${range.x.start.toFixed(10)} ${range.x.end.toFixed(10)} ${range.y.start.toFixed(10)} ${range.y.end.toFixed(10)}`;
         const commend = `getAllLine ${token} ${this.dpi} ${rangeStr}`;
         this.responseStacks.push({

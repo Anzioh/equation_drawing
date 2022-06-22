@@ -15,7 +15,7 @@
 import { storeToRefs } from 'pinia'
 import { useGlobalStore } from '@/store/global'
 import { usePlotlyStore } from "@/store/plotly"
-import { exec } from "child_process"
+import { exec, execFile } from "child_process"
 import Menu from '@/components/Menu'
 import Plotly from '@/components/Plotly'
 
@@ -37,7 +37,9 @@ export default {
     Plotly,
   },
   beforeMount() {
-    this.globalStore.process = exec(`./src/assets/binary/${this.globalStore.isMac ? 'macOS' : 'Windows'}/equation_drawing${this.globalStore.isMac ? '' : '.exe'}`);
+    console.log(window.navigator.platform); 
+    console.log(`./src/assets/binary/${this.globalStore.isMac ? 'macOS' : 'Windows'}/equation_drawing${this.globalStore.isMac ? '' : '.exe'}`);
+    this.globalStore.process = execFile(`./src/assets/binary/${this.globalStore.isMac ? 'macOS' : 'Windows'}/equation_drawing${this.globalStore.isMac ? '' : '.exe'}`);
   },
   mounted() {
     this.globalStore.process.stdout.on("data", (response) => {
