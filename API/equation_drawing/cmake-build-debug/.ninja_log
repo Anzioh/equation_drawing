@@ -1,0 +1,8 @@
+# ninja log v5
+0	116	1655981889763843277	build.ninja	8d2097084f8eeb73
+220	8854	1655894842254803889	CMakeFiles/equation_drawing.dir/main.cpp.o	7bf1262ebe4cb56d
+5	1703	1655824903710054536	CMakeFiles/equation_drawing.dir/Equation.cpp.o	2619abd2cdb86189
+220	9251	1655894842750281739	CMakeFiles/equation_drawing.dir/Viewer.cpp.o	b1fa8eeab0dc5c18
+9251	9652	1655894843186545591	equation_drawing	2d880e25f8c90556
+220	8996	1655894842525949133	CMakeFiles/equation_drawing.dir/Caculater.cpp.o	d76c1744ac4386d7
+220	7880	1655894841414721431	CMakeFiles/equation_drawing.dir/Variable.cpp.o	fd6fd4f9b227885c
