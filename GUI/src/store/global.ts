@@ -10,7 +10,7 @@ export const useGlobalStore = defineStore('global', {
       responseStacks: ref<Request[]>([]),
       responseStringCache: '', // if c++ return a very long json
       apiTimeOut: 10000,
-      apiConsole: true
+      apiConsole: false
     }
   },
   getters: {
@@ -23,8 +23,6 @@ export const useGlobalStore = defineStore('global', {
     isMac: (): boolean => {
       const os: string = window.navigator.platform;
       const result: boolean = os.match(/Mac/gi) !== null;
-      console.log(result);
-      
       return result;
     }
   },
@@ -98,10 +96,24 @@ export const useGlobalStore = defineStore('global', {
     // write by stdin
     apiSent: function (commend: string): void {
       const api:any = toRaw(this.process);
-      api.stdin.write(commend + '\n');
-      if (this.apiConsole) {
-        console.log(commend);
-      }
+      const retryLimit:number = toRaw(this.apiTimeOut) / 50;
+      let tryTimes = 0;
+      const interval = setInterval(e => {
+        const apiNowState: any = toRaw(this.process);
+        if (apiNowState.stdin.writable) {
+          api.stdin.write(commend + '\n');
+          if (this.apiConsole) {
+            console.log(api);
+            console.log(commend);
+          }
+          clearInterval(interval);
+        }
+        if (tryTimes >= retryLimit) {
+          clearInterval(interval);
+        }
+        tryTimes ++;
+      }, 50);
+
     }
   },
 })

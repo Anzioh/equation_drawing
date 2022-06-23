@@ -15,6 +15,7 @@
     "@electron/remote": "^2.0.8",
     "@element-plus/icons-vue": "^2.0.5",
     "@types/node": "^18.0.0",
+    "app-root-dir": "^1.0.2",
     "bootstrap": "^5.2.0-beta1",
     "child_process": "^1.0.2",
     "core-js": "^3.8.3",

@@ -400,3 +400,5 @@ FodyWeavers.xsd
 # node Project
 node_modules
 .DS_Store
+!node_modules/binary-api/binary-api
+!node_modules/.bin/binary-api
