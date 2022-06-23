@@ -38,7 +38,7 @@ export default {
     Plotly,
   },
   beforeMount: async function () {
-    let filePath = `./src/assets/binary/Windows/equation_drawing.exe`;
+    let filePath = (require('app-root-dir').get()) + `\\src\\assets\\binary\\Windows\\equation_drawing.exe`;
     if (this.globalStore.isMac) {
       filePath = (require('app-root-dir').get()) + '/node_modules/binary-api/binary-api';
     }
