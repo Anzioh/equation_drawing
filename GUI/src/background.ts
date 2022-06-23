@@ -58,10 +58,12 @@ app.on('activate', () => {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 app.on('ready', async () => {
+  const { default: installExtension, } = require('electron-devtools-installer');
+  let vue_devtools_beta = { id: "ljjemllljcmogpfapbkkighbhhppjdbg", electron: ">=1.2.1" }
   if (isDevelopment && !process.env.IS_TEST) {
     // Install Vue Devtools
     try {
-      await installExtension(VUEJS3_DEVTOOLS)
+      await installExtension(vue_devtools_beta)
     } catch (e) {
       console.log(e)
       //console.error('Vue Devtools failed to install:', e.toString())

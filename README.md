@@ -1,4 +1,45 @@
-# equation_drawing
+<img src="./Preview/logo.jpg">
+
+# <center>bla plotter<center>
+### <center>高效能、垮平台的2D圖形繪製神器</center>
+
+## Preview
+<img src="./Preview/primary_preview.png" alt="">
+
+## GUI
+使用Electron + Vue3 + Pinia + TypeScript製作。如果您是使用macOS系統，且運作版本等於或高於macOS 10.13.6
+您可以下載我們的release版本來執行，如果您想要自行編譯或是build，可以參照下面的語令(需要先安裝Git CLI)
+
+### GUI運行與編譯(使用SourceCode運行)
+
+#### Clone this Project
+```shell
+git clone https://github.com/Anzioh/equation_drawing.git
+```
+
+#### Check node version(only supported 14.4 ~ 16.15.1, You should install node.js first)
+```shell
+node -v
+```
+#### Backup binaryAPI
+```shell
+cd equation_drawing/GUI/ && cp -r ./node_modules/binary-api .
+```
+
+#### Install depends library
+```shell
+cd equation_drawing && npm install
+```
+
+#### Inject binary-api to node_modules
+```shell
+mkdir ./node_modules/binary-api && cp ./binary-api/binary-api ./node_modules/binary-api/
+```
+
+#### run GUI
+```shell
+npm run electron:serve
+```
 
 ## API
 

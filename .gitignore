@@ -283,7 +283,6 @@ FakesAssemblies/
 
 # Node.js Tools for Visual Studio
 .ntvs_analysis.dat
-node_modules/
 
 # Visual Studio 6 build log
 *.plg
@@ -397,8 +396,10 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 
+# JetBrains IDE
+.idea
+
 # node Project
-node_modules
 .DS_Store
 !node_modules/binary-api/binary-api
 !node_modules/.bin/binary-api
