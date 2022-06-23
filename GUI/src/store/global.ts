@@ -9,8 +9,9 @@ export const useGlobalStore = defineStore('global', {
       process: null,
       responseStacks: ref<Request[]>([]),
       responseStringCache: '', // if c++ return a very long json
-      apiTimeOut: 10000,
-      apiConsole: false
+      apiTimeOut: 1000,
+      apiConsole: false,
+      apiCrash: false
     }
   },
   getters: {
@@ -96,7 +97,7 @@ export const useGlobalStore = defineStore('global', {
     // write by stdin
     apiSent: function (commend: string): void {
       const api:any = toRaw(this.process);
-      const retryLimit:number = toRaw(this.apiTimeOut) / 50;
+      const retryLimit:number = toRaw(this.apiTimeOut);
       let tryTimes = 0;
       const interval = setInterval(e => {
         const apiNowState: any = toRaw(this.process);
@@ -107,13 +108,14 @@ export const useGlobalStore = defineStore('global', {
             console.log(commend);
           }
           clearInterval(interval);
+        }else {
+          console.log('api stdout disable');
         }
         if (tryTimes >= retryLimit) {
           clearInterval(interval);
         }
         tryTimes ++;
       }, 50);
-
     }
   },
 })

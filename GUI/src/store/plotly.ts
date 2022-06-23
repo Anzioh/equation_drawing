@@ -51,7 +51,7 @@ export const usePlotlyStore = defineStore("plotly", {
                     end: 5
                 }
             },
-            dpi: 1200,
+            dpi: 1800,
             equations: ref<Equation[]>([]),
             variables: ref<Variable[]>([])
         }
