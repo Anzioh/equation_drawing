@@ -38,10 +38,11 @@ export default {
     Plotly,
   },
   beforeMount: async function () {
-    let filePath = (require('app-root-dir').get()) + `\\src\\assets\\binary\\Windows\\equation_drawing.exe`;
+    let filePath = (require('app-root-dir').get()) + `\\extraResources\\Windows\\equation_drawing.exe`;
     if (this.globalStore.isMac) {
-      filePath = (require('app-root-dir').get()) + '/node_modules/binary-api/binary-api';
+      filePath = (require('app-root-dir').get()) + '/extraResources/macOS/equation_drawing';
     }
+    filePath = filePath.replace(/ /g, '\\ ');
     this.process = exec(filePath, {
       maxBuffer: 1024 * 2000000,
       encoding: 'utf8'
@@ -72,8 +73,6 @@ export default {
 
       // filter completed request
       const completedRequest = this.responseStacks.filter(e => e.completed);
-      // filter hasn't completed request;
-      const unDoneRequest = this.responseStacks.filter(e => !e.completed);
 
       // restore
       this.responseStacks = [];
@@ -94,14 +93,6 @@ export default {
           console.log(`restore completed: ${request.commend}\n token: ${request.token}`);
         }
       }
-      // unDoneRequest.forEach(async request => {
-      //   await this.globalStore.waitAllReqCompleted();
-      //   this.responseStacks.push(request);
-      //   this.globalStore.apiSent(request.commend);
-      //   if (this.globalStore.apiConsole) {
-      //     console.log(`restore completed: ${request.commend}\n token: ${request.token}`);
-      //   }
-      // });
       if (this.globalStore.apiConsole) {
         console.log(`
           ================================\n
