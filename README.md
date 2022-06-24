@@ -21,24 +21,25 @@ git clone https://github.com/Anzioh/equation_drawing.git
 ```shell
 node -v
 ```
-#### Backup binaryAPI
-```shell
-cd equation_drawing/GUI/ && cp -r ./node_modules/binary-api .
-```
 
 #### Install depends library
 ```shell
-cd equation_drawing && npm install
+cd equation_drawing/GUI && npm install
 ```
 
-#### Inject binary-api to node_modules
+#### fix es5-ext plugin path bug
 ```shell
-mkdir ./node_modules/binary-api && cp ./binary-api/binary-api ./node_modules/binary-api/
+npm run fix:es5-ext
 ```
 
 #### run GUI
 ```shell
-npm run electron:serve
+npm start
+```
+
+#### build app
+```shell
+npm run build
 ```
 
 ## API
