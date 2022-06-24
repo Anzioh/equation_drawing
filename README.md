@@ -27,19 +27,19 @@ node -v
 cd equation_drawing/GUI && npm install
 ```
 
-#### fix es5-ext plugin path bug
-```shell
-npm run fix:es5-ext
-```
-
 #### run GUI
 ```shell
 npm start
 ```
 
-#### build app
+#### build app(macOS)
 ```shell
 npm run build
+```
+
+#### build app(Windows)
+```shell
+npm run build:windows
 ```
 
 ## API
